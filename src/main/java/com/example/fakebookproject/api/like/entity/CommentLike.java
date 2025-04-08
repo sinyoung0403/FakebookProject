@@ -11,7 +11,7 @@ import org.hibernate.mapping.ToOne;
 
 @Getter
 @Entity
-@Table(name = "comment_like")
+@Table(name = "comment_likes")
 @NoArgsConstructor
 public class CommentLike {
 
@@ -24,7 +24,7 @@ public class CommentLike {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "comment_id")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Comment comment;

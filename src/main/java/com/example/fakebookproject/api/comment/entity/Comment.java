@@ -1,16 +1,16 @@
 package com.example.fakebookproject.api.comment.entity;
 
-import com.example.fakebookproject.common.config.BaseTimeEntity;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.user.entity.User;
+import com.example.fakebookproject.common.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Check;
 
 @Getter
 @Entity
 @NoArgsConstructor
+@Table(name = "comments")
 public class Comment extends BaseTimeEntity {
 
     @Id

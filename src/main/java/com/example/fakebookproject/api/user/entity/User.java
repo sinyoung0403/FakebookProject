@@ -70,6 +70,16 @@ public class User extends BaseTimeEntity {
         this.isDeleted = false;
     }
 
+    public User(String email, String password, String userName, LocalDate birth, String gender, String phone) {
+        this.email = email;
+        this.password = password;
+        this.userName = userName;
+        this.birth = birth;
+        this.gender = gender;
+        this.phone = phone;
+        this.isDeleted = false;
+    }
+
     // public User (파라미터) {
     // super();
     // this~~~~~~ = ~~~~

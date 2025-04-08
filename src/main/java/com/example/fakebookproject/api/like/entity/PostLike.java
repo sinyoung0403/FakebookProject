@@ -10,7 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Entity
-@Table(name = "post_like")
+@Table(name = "post_likes")
 @NoArgsConstructor
 public class PostLike {
 
@@ -23,17 +23,22 @@ public class PostLike {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "post_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Post posts;
+    private Post post;
+
+    public PostLike(User user, Post post) {
+        this.user = user;
+        this.post = post;
+    }
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void setPosts(Post posts) {
-        this.posts = posts;
+    public void setPost(Post post) {
+        this.post = post;
     }
 
 }
