@@ -1,5 +1,7 @@
 package com.example.fakebookproject.api.user.service;
 
+import com.example.fakebookproject.api.user.dto.LoginRequestDto;
+import com.example.fakebookproject.api.user.dto.PasswordRequestDto;
 import com.example.fakebookproject.api.user.dto.UserCreateRequestDto;
 import com.example.fakebookproject.api.user.dto.UserResponseDto;
 import com.example.fakebookproject.api.user.entity.User;
@@ -47,10 +49,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 상세페이지
+     * 유저 단건 조회
      *
-     * @param userId 검색 대상 사용자 ID
-     * @return 검색된 사용자 정보
-     * @Throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
+     * @param userId 조회 대상 사용자 ID
+     * @return 조회된 사용자 정보
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
      */
     @Override
     public UserResponseDto findUserById(Long userId) {
@@ -60,6 +64,50 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
         return new UserResponseDto(user);
+    }
+
+    /**
+     * 마이페이지 - 내 정보 조회
+     *
+     * @param loginUserId loginUser 세션에 저장된 로그인 사용자 ID
+     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
+     * @return 로그인한 사용자 정보
+     */
+    @Override
+    public UserResponseDto findUserByLoginUserId(Long loginUserId, PasswordRequestDto dto) {
+
+        // 유저 검색
+        User user = userRepository.findById(loginUserId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
+        }
+
+        return new UserResponseDto(user);
+    }
+
+    /**
+     * 로그인 요청 정보를 기반으로 사용자 인증 수행
+     *
+     * @param dto 로그인 요청 정보 (이메일, 비밀번호)
+     * @return 인증된 사용자 객체
+     * @throws CustomException 로그인 실패 시 예외 발생 (이메일 미존재 또는 비밀번호 불일치)
+     */
+    @Override
+    public User loginUser(LoginRequestDto dto) {
+
+        // 이메일로 사용자 조회
+        Optional<User> user = userRepository.findUserByEmail(dto.getEmail());
+
+        // 사용자가 없거나 비밀번호가 일치하지 않으면 예외 발생
+        if (user.isEmpty() || !passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
+            throw new CustomException(ExceptionCode.LOGIN_FAILED);
+        }
+
+        // 인증 성공 시 사용자 반환
+        return user.get();
     }
 
     /**
