@@ -1,4 +1,5 @@
 package com.example.fakebookproject.entity;
 
-public class Posts {
+
+public class Post {
 }
