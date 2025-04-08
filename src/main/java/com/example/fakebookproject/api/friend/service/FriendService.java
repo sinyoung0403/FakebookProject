@@ -10,9 +10,9 @@ public interface FriendService {
 
     FriendResponseDto requestFriend(Long requestUserId, Long responseUserId);
 
-    List<FriendPageResponseDto> findMyFriends(Long userId, int page, int size);
-
-    List<FriendPageResponseDto> recommendFriends(Long userId, int page, int size);
-
-    List<FriendPageResponseDto> receivedFriends(Long userId, int page, int size);
+//    List<FriendPageResponseDto> findMyFriends(Long userId, int page, int size);
+//
+//    List<FriendPageResponseDto> recommendFriends(Long userId, int page, int size);
+//
+//    List<FriendPageResponseDto> receivedFriends(Long userId, int page, int size);
 }

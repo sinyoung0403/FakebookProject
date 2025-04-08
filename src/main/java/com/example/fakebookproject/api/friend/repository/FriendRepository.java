@@ -27,40 +27,38 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
                     )
                     WHERE f.status = 1        
             """)
-    List<Object[]> findAllByUserIdAndStatusAcceptedOrElseThrow(@Param("userId") Long userId);
+    List<Long> findAllByUserIdAndStatusAcceptedOrElseThrow(@Param("userId") Long userId);
 
-    /**
-     * 추천 친구 목록
-     * @param userId
-     * @param pageable
-     * @return
-     */
-    @Query("""
-                    SELECT f, u FROM FriendStatus f
-                    JOIN User u ON (
-                        (f.requestUser.id = :userId AND u.id = f.responseUser.id)
-                        OR 
-                        (f.responseUser.id = :userId AND u.id = f.requestUser.id)
-                    ) 
-                    WHERE f.status = 0 AND u.cityName = :cityName
-                        
-            """)
-    Page<Object[]> findRecommendationAllByUserIdOrElseThrow(@Param("userId") Long userId, Pageable pageable);
-
-    /**
-     * 요청 받은 친구 목록
-     * @param userId
-     * @param pageable
-     * @return
-     */
-    @Query("""
-                    SELECT f, u FROM FriendStatus f
-                    JOIN User u ON (
-                        (f.requestUser.id = :userId AND u.id = f.responseUser.id)
-                        OR 
-                        (f.responseUser.id = :userId AND u.id = f.requestUser.id)
-                    )
-                        
-            """)
-    Page<Object[]> findReceivedAllByUserIdOrElseThrow(@Param("userId") Long userId, Pageable pageable);
+//    /**
+//     * 추천 친구 목록
+//     * @param userId
+//     * @return
+//     */
+//    @Query("""
+//                    SELECT f, u FROM FriendStatus f
+//                    JOIN User u ON (
+//                        (f.requestUser.id = :userId AND u.id = f.responseUser.id)
+//                        OR
+//                        (f.responseUser.id = :userId AND u.id = f.requestUser.id)
+//                    )
+//                    WHERE f.status = 0 AND u.cityName = :cityName
+//
+//            """)
+//    List<Object[]> findRecommendationAllByUserIdOrElseThrow(@Param("userId") Long userId);
+//
+//    /**
+//     * 요청 받은 친구 목록
+//     * @param userId
+//     * @return
+//     */
+//    @Query("""
+//                    SELECT f, u FROM FriendStatus f
+//                    JOIN User u ON (
+//                        (f.requestUser.id = :userId AND u.id = f.responseUser.id)
+//                        OR
+//                        (f.responseUser.id = :userId AND u.id = f.requestUser.id)
+//                    )
+//
+//            """)
+//    List<Object[]> findReceivedAllByUserIdOrElseThrow(@Param("userId") Long userId);
 }

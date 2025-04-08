@@ -24,35 +24,35 @@ public class FriendController {
         return new ResponseEntity<>(friendResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<FriendPageResponseDto>> findMyFriends(
-            @PathVariable Long userId,
-            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
-            @RequestParam(required = false, defaultValue = "10", value = "size") int size
-    ) {
-        List<FriendPageResponseDto> friendResponseDtoList = friendService.findMyFriends(userId, page, size);
-        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
-    }
-
-    @GetMapping("/recommendations/{userId}")
-    public ResponseEntity<List<FriendPageResponseDto>> recommendFriends(
-            @PathVariable Long userId,
-            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
-            @RequestParam(required = false, defaultValue = "10", value = "size") int size
-    ) {
-        List<FriendPageResponseDto> friendResponseDtoList = friendService.recommendFriends(userId, page, size);
-        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
-    }
-
-    @GetMapping("/received")
-    public ResponseEntity<List<FriendPageResponseDto>> receivedFriends(
-            @PathVariable Long userId,
-            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
-            @RequestParam(required = false, defaultValue = "10", value = "size") int size
-    ) {
-        List<FriendPageResponseDto> friendResponseDtoList = friendService.receivedFriends(userId, page, size);
-        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
-    }
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<List<FriendPageResponseDto>> findMyFriends(
+//            @PathVariable Long userId,
+//            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
+//            @RequestParam(required = false, defaultValue = "10", value = "size") int size
+//    ) {
+//        List<FriendPageResponseDto> friendResponseDtoList = friendService.findMyFriends(userId, page, size);
+//        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/recommendations/{userId}")
+//    public ResponseEntity<List<FriendPageResponseDto>> recommendFriends(
+//            @PathVariable Long userId,
+//            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
+//            @RequestParam(required = false, defaultValue = "10", value = "size") int size
+//    ) {
+//        List<FriendPageResponseDto> friendResponseDtoList = friendService.recommendFriends(userId, page, size);
+//        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
+//    }
+//
+//    @GetMapping("/received")
+//    public ResponseEntity<List<FriendPageResponseDto>> receivedFriends(
+//            @PathVariable Long userId,
+//            @RequestParam(required = false, defaultValue = "0", value = "page") int page,
+//            @RequestParam(required = false, defaultValue = "10", value = "size") int size
+//    ) {
+//        List<FriendPageResponseDto> friendResponseDtoList = friendService.receivedFriends(userId, page, size);
+//        return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
+//    }
 
 //    @GetMapping("/sent")
 //    public ResponseEntity<List<FriendResponseDto>> receivedFriends(
