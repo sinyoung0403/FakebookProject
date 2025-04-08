@@ -2,6 +2,8 @@ package com.example.fakebookproject.api.like.repository;
 
 import com.example.fakebookproject.api.like.entity.PostLike;
 import com.example.fakebookproject.api.post.entity.Post;
+import com.example.fakebookproject.common.exception.CustomException;
+import com.example.fakebookproject.common.exception.ExceptionCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -17,7 +19,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     Optional<PostLike> findByPost_IdAndUser_Id(Long postId, Long userId);
 
     default PostLike findByPost_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
-        return findByPost_IdAndUser_Id(postId, userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "데이터 없음"));
+        return findByPost_IdAndUser_Id(postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
     }
 
     Long post(Post post);
