@@ -23,7 +23,7 @@ public class FriendStatus {
     @JoinColumn(name = "response_user_id")
     private User responseUser;
 
-    // 수락 1, 대기 0
+    // 수락 1, 대기(요청) 0
     @Column(name = "status",
             columnDefinition = "INT(1) CHECK (status IN (1, 0))")
     private int status;
