@@ -80,6 +80,16 @@ public class User extends BaseTimeEntity {
         this.isDeleted = false;
     }
 
+    public void updateUser(String password, String userName, LocalDate birth, String phone,
+                           String imageUrl, String hobby, String cityName) {
+        if (password != null) this.password = password;
+        if (userName != null) this.userName = userName;
+        if (birth != null) this.birth = birth;
+        if (phone != null) this.phone = phone;
+        if (imageUrl != null) this.imageUrl = imageUrl;
+        if (hobby != null) this.hobby = hobby;
+        if (cityName != null) this.cityName = cityName;
+    }
     // public User (파라미터) {
     // super();
     // this~~~~~~ = ~~~~

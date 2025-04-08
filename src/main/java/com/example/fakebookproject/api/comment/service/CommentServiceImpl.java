@@ -33,8 +33,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentResponseDto createComment(Long userId, Long postId, String content) {
-        User user = getUserById(userId);
-        Post post = getPostById(postId);
+        User user = userRepository.findByIdOrElseThrow(userId);
+        Post post = postRepository.findByIdOrElseThrow(postId);
 
         Comment comment = new Comment(user, post, content);
         Comment saved = commentRepository.save(comment);
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Page<CommentResponseDto> findAllComments(Long postId, Pageable pageable) {
-        Post post = getPostById(postId);
+        Post post = postRepository.findByIdOrElseThrow(postId);
         Page<Comment> comments = commentRepository.findByPost(post, pageable);
 
         return comments.map(CommentResponseDto::new);
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDto updateComment(Long userId, Long commentId, String content) {
-        Comment comment = getCommentById(commentId);
+        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
@@ -98,27 +98,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
-        Comment comment = getCommentById(commentId);
+        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
         commentRepository.delete(comment);
-    }
-
-    private User getUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
-    }
-
-    private Post getPostById(Long postId) {
-        return postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE));
-    }
-
-    private Comment getCommentById(Long commentId) {
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_COMMENT));
     }
 }
