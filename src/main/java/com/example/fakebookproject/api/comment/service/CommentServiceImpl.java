@@ -33,7 +33,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public CommentResponseDto createComment(Long userId, Long postId, String content) {
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.findUserByIdOrElseThrow(userId);
         Post post = postRepository.findByIdOrElseThrow(postId);
 
         Comment comment = new Comment(user, post, content);
