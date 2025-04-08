@@ -1,4 +1,4 @@
-package com.example.fakebookproject.entity;
+package com.example.fakebookproject.common.config;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

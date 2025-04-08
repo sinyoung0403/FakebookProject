@@ -1,17 +1,21 @@
-package com.example.fakebookproject.entity;
+package com.example.fakebookproject.api.user.entity;
 
+import com.example.fakebookproject.common.config.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
 @Getter
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-public class Users {
+// @SQLDelete(sql = "update users set deleted = true where id = ?")
+// @SQLRestriction("deleted = false")
+public class User extends BaseTimeEntity {
 
     // PK
     @Id
@@ -19,7 +23,7 @@ public class Users {
     private Long id;
 
     // 이메일 주소
-    @Column(nullable = false, length = 30, unique = true)
+    @Column(nullable = false, length = 50, unique = true)
     private String email;
 
     // 비밀번호 (Bcrypt 해시값 저장)
@@ -37,7 +41,7 @@ public class Users {
     // 성별 (체크 제약조건)
     // M(남자), F(여자)
     @Column(nullable = false, columnDefinition = "CHAR(1) CHECK (gender IN ('M', 'F'))")
-    private Character gender;
+    private String gender;
 
     // 휴대폰 번호
     @Column(nullable = false, length = 13)
@@ -48,16 +52,28 @@ public class Users {
     private String imageUrl;
 
     // 취미
-    @Column(length = 20)
+    @Column(length = 50)
     private String hobby;
 
-    // 지역
-    @Column(name = "city_name", length = 20)
+    // 지역 "경기도, 강원도, 충청도, 전라도, 경상도, 제주특별자치도 등등"
+    @Column(name = "city_name",
+            columnDefinition = "VARCHAR(6) CHECK (city_name IN ('서울', '인천', '대전', '대구', '부산', '광주', '경기'," +
+                    " '강원', '충청', '전라', '경상', '제주'))")
     private String cityName;
 
     // 소프트 딜리트
     @ColumnDefault("false")
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    private boolean isDeleted;
+
+    public User() {
+        this.isDeleted = false;
+    }
+
+    // public User (파라미터) {
+    // super();
+    // this~~~~~~ = ~~~~
+    //
+    //
 
 }
