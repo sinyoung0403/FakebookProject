@@ -14,10 +14,10 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
 
     List<PostLike> findAllByPost_Id(Long postId);
 
-    Optional<PostLike> findByPost_IdAndUser_ID(Long postId, Long userId);
+    Optional<PostLike> findByPost_IdAndUser_Id(Long postId, Long userId);
 
-    default PostLike findByPost_IdAndUser_IDOrElseThrow(Long postId, Long userId) {
-        return findByPost_IdAndUser_ID(postId, userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "데이터 없음"));
+    default PostLike findByPost_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
+        return findByPost_IdAndUser_Id(postId, userId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "데이터 없음"));
     }
 
     Long post(Post post);
