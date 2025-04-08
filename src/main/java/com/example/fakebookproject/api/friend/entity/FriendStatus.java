@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @Table(name = "friend_status")
-@NoArgsConstructor
 public class FriendStatus {
 
     // PK
@@ -29,4 +28,14 @@ public class FriendStatus {
             columnDefinition = "INT(1) CHECK (status IN (1, 0))")
     private int status;
 
+    public FriendStatus() {}
+
+    public void setUser(User requestUser, User responseUser) {
+        this.requestUser = requestUser;
+        this.responseUser = responseUser;
+    }
+
+    public void update(int status) {
+        this.status = status;
+    }
 }
