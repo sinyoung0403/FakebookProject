@@ -29,6 +29,11 @@ public class CommentLike {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Comment comment;
 
+  public CommentLike(User user, Comment comment) {
+    this.user = user;
+    this.comment = comment;
+  }
+
   public void setUsers(User user) {
     this.user = user;
   }
