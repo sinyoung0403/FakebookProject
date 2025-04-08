@@ -8,10 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-@RequiredArgsConstructor
 public class FindAllPostLikeResponseDto {
-    private final String userName;
-    private final String imageUrl;
+    private String userName;
+    private String imageUrl;
 
     /**
      * PostLike 를 ResponseDto 로 변환해주는 정적 메서드

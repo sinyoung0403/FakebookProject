@@ -5,12 +5,9 @@ import com.example.fakebookproject.api.like.entity.PostLike;
 import com.example.fakebookproject.api.like.repository.PostLikeRepository;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.post.repository.PostRepository;
+import com.example.fakebookproject.api.user.dto.LoginRequestDto;
 import com.example.fakebookproject.api.user.entity.User;
-import com.example.fakebookproject.api.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +27,13 @@ public class PostLikeServiceImpl implements PostLikeService {
      */
     @Transactional
     @Override
-    public void createPostLike(Long postId) {
+    public void createPostLike(Long postId, LoginRequestDto loginRequestDto) {
         // 1. 데이터 검증 및 조회 . 실제 테이블이 존재하는 가.
         // 세션 생길 시
         User findUser = new User();
 //        User uwd ser = UserRepository.findByIdOrElseThrow(userId);
-        Post findPost = postRepository.findByIdOrElseThrow(postId);
+//        Post findPost = postRepository.validateExistenceByPost_Id(postId);
+        Post findPost = new Post();
 
         // 2. Entity 로 변환.
         PostLike postLike = new PostLike(findUser, findPost);
