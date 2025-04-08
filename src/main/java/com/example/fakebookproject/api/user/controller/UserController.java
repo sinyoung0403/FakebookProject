@@ -66,6 +66,21 @@ public class UserController {
     }
 
     /**
+     * 회원 탈퇴 (소프트 딜리트 방식)
+     * 사용자의 비밀번호를 검증한 후, 실제 삭제 대신 is_deleted를 true로 변경
+     *
+     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
+     * @return HttpStatus.NO_CONTENT
+     */
+    @DeleteMapping
+    public ResponseEntity<Void> deleteUser(@SessionAttribute ("loginUser") Long loginUserId,
+                                           @RequestBody PasswordRequestDto dto) {
+        userService.deleteUser(loginUserId, dto);
+        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+    }
+
+    /**
      * 로그인
      *
      * @param dto 로그인 요청 정보 (아이디, 비밀번호)
