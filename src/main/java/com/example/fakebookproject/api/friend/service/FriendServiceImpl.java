@@ -44,80 +44,76 @@ public class FriendServiceImpl implements FriendService {
                 friendStatus.getStatus()
         );
     }
-
-    @Override
-    public List<FriendPageResponseDto> findMyFriends(Long userId, int page, int size) {
-        //Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<Object[]> friendsList = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId, pageable);
-
-        //모든 친구
-        long totalCount = friendsList.getTotalElements();
-
-        return friendsList
-                .getContent()
-                .stream()
-                .map(row -> {
-                    FriendStatus friend = (FriendStatus) row[0];
-                    User user = (User) row[1];
-                    return new FriendPageResponseDto(
-                            user.getUserName(),
-                            user.getImageUrl()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<FriendPageResponseDto> recommendFriends(Long userId, int page, int size) {
-        //Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page, size);
-
-        Page<Object[]> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(userId, pageable);
-
-        //모든 추천 친구
-        long totalCount = recommendationList.getTotalElements();
-
-        return recommendationList
-                .getContent()
-                .stream()
-                .map(row -> {
-                    FriendStatus friend = (FriendStatus) row[0];
-                    User user = (User) row[1];
-                    return new FriendPageResponseDto(
-                            user.getUserName(),
-                            user.getImageUrl()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<FriendPageResponseDto> receivedFriends(Long userId, int page, int size) {
-        //Pageable 객체 생성
-        Pageable pageable = PageRequest.of(page, size);
-
-        //Page객체로 데이터 생성
-        Page<Object[]> receivedList = friendRepository.findReceivedAllByUserIdOrElseThrow(userId, pageable);
-
-        //모든 추천 친구
-        long totalCount = receivedList.getTotalElements();
-
-        return receivedList
-                .getContent()
-                .stream()
-                .map(row -> {
-                    FriendStatus friend = (FriendStatus) row[0];
-                    User user = (User) row[1];
-                    return new FriendPageResponseDto(
-                            user.getUserName(),
-                            user.getImageUrl()
-                    );
-                })
-                .collect(Collectors.toList());
-
-    }
+//
+//    @Override
+//    public List<FriendPageResponseDto> findMyFriends(Long userId, int page, int size) {
+//        //Pageable 객체 생성
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        List<Object[]> friendsList = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
+//
+//        //모든 친구
+//        //long totalCount = friendsList.getTotalElements();
+//
+//        return friendsList
+//                .stream()
+//                .map(row -> {
+//                    FriendStatus friend = (FriendStatus) row[0];
+//                    User user = (User) row[1];
+//                    return new FriendPageResponseDto(
+//                            user.getUserName(),
+//                            user.getImageUrl()
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<FriendPageResponseDto> recommendFriends(Long userId, int page, int size) {
+//        //Pageable 객체 생성
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        //Page<Object[]> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(userId, pageable);
+//
+//        List<Object[]> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(userId);
+//
+//        return recommendationList
+//                .stream()
+//                .map(row -> {
+//                    FriendStatus friend = (FriendStatus) row[0];
+//                    User user = (User) row[1];
+//                    return new FriendPageResponseDto(
+//                            user.getUserName(),
+//                            user.getImageUrl()
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public List<FriendPageResponseDto> receivedFriends(Long userId, int page, int size) {
+//        //Pageable 객체 생성
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        //Page객체로 데이터 생성
+//        List<Object[]> receivedList = friendRepository.findReceivedAllByUserIdOrElseThrow(userId);
+//
+//        //모든 추천 친구
+//        //long totalCount = receivedList.getTotalElements();
+//
+//        return receivedList
+//                .stream()
+//                .map(row -> {
+//                    FriendStatus friend = (FriendStatus) row[0];
+//                    User user = (User) row[1];
+//                    return new FriendPageResponseDto(
+//                            user.getUserName(),
+//                            user.getImageUrl()
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//
+//    }
 
 
 
