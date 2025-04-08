@@ -9,9 +9,11 @@ import java.util.List;
 
 public interface PostService {
 
+    PostResponseDto findPostById(Long id);
+
     void createPost(PostCreateRequestDto postCreateRequestDto, HttpServletRequest request);
 
     Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size);
 
-    //Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size);
+    Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size);
 }

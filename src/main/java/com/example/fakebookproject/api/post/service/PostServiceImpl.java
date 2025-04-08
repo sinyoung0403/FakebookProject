@@ -30,11 +30,17 @@ public class PostServiceImpl implements PostService{
     private final FriendRepository friendRepository;
 
     @Override
+    public PostResponseDto findPostById(Long id) {
+        Post post = postRepository.findPostByIdOrElseThrow(id);
+        return null;
+    }
+
+    @Override
     public void createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
 
         HttpSession session = request.getSession();
 
-        Object sessionId = session.getAttribute("user");
+        Object sessionId = session.getAttribute("loginUser");
 
         Long userId = null;
 
@@ -58,7 +64,7 @@ public class PostServiceImpl implements PostService{
     public Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size) {
         HttpSession session = request.getSession();
 
-        Object sessionId = session.getAttribute("user");
+        Object sessionId = session.getAttribute("loginUser");
 
         Long userId = null;
 
@@ -73,25 +79,25 @@ public class PostServiceImpl implements PostService{
         return postPage.map(PostResponseDto::new);
     }
 
-//    @Override
-//    public Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size) {
-//        HttpSession session = request.getSession();
-//
-//        Object sessionId = session.getAttribute("user");
-//
-//        Long userId = null;
-//
-//        if(sessionId instanceof Long){
-//            userId = (Long) sessionId;
-//        }
-//
-//        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
-//
-//        Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
-//
-//        return posts.map(PostResponseDto::new);
-//
-//    }
+    @Override
+    public Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size) {
+        HttpSession session = request.getSession();
+
+        Object sessionId = session.getAttribute("user");
+
+        Long userId = null;
+
+        if(sessionId instanceof Long){
+            userId = (Long) sessionId;
+        }
+
+        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
+
+        Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
+
+        return posts.map(PostResponseDto::new);
+
+    }
 
 
 }

@@ -53,5 +53,16 @@ public class PostController {
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PostResponseDto> findPostById(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ){
+        PostResponseDto responseDto = postService.findPostById(id);
+
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
 
 }

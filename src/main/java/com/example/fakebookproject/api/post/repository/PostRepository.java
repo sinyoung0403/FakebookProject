@@ -38,8 +38,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         }
     }
 
+    default Post findPostByIdOrElseThrow(Long id){
+        return findById(id).orElseThrow(()->
+                new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE
+                )
+        );
+    }
+
+
 
     Page<Post> findByUserId(Long userId, Pageable pageable);
 
     Page<Post> findPostByUserIdIn(List<Long> userIds, Pageable pageable);
+
 }
