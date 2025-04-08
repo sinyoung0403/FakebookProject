@@ -28,5 +28,5 @@ public class FriendStatus {
     @Column(name = "status",
             columnDefinition = "INT(1) CHECK (status IN (1, 0))")
     private int status;
-    
+
 }

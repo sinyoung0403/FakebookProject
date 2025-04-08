@@ -24,7 +24,7 @@ public class CommentLike {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "comment_id")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Comment comment;
