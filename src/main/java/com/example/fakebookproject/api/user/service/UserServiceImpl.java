@@ -1,9 +1,6 @@
 package com.example.fakebookproject.api.user.service;
 
-import com.example.fakebookproject.api.user.dto.LoginRequestDto;
-import com.example.fakebookproject.api.user.dto.PasswordRequestDto;
-import com.example.fakebookproject.api.user.dto.UserCreateRequestDto;
-import com.example.fakebookproject.api.user.dto.UserResponseDto;
+import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
 import com.example.fakebookproject.common.config.PasswordEncoder;
@@ -11,10 +8,10 @@ import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,22 +25,20 @@ public class UserServiceImpl implements UserService {
      *
      * @param dto 회원가입 요청 데이터 (이메일, 비밀번호, 이름 등)
      * @return 생성된 사용자 정보
+     * @throws CustomException 이미 존재하는 이메일인 경우 예외 발생
      */
     @Override
     public UserResponseDto createUser(UserCreateRequestDto dto) {
+
+        // 이메일 존재 여부 확인
+        userRepository.validateExistenceByUserEmail(dto.getEmail());
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
         // User 엔티티 생성 및 저장
-        User user = new User(
-                dto.getEmail(),
-                encodedPassword,
-                dto.getUserName(),
-                parseBirth(dto.getBirth()),
-                dto.getGender(),
-                dto.getPhone()
-        );
+        User user = new User(dto.getEmail(), encodedPassword, dto.getUserName(),
+                parseBirth(dto.getBirth()), dto.getGender(), dto.getPhone());
 
         return new UserResponseDto(userRepository.save(user));
     }
@@ -60,8 +55,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto findUserById(Long userId) {
 
         // 유저 검색
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+        User user = userRepository.findUserByIdOrElseThrow(userId);
 
         return new UserResponseDto(user);
     }
@@ -72,18 +66,49 @@ public class UserServiceImpl implements UserService {
      * @param loginUserId loginUser 세션에 저장된 로그인 사용자 ID
      * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
      * @return 로그인한 사용자 정보
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
+     * @throws CustomException 비밀번호 불일치 시 예외 발생
      */
     @Override
     public UserResponseDto findUserByLoginUserId(Long loginUserId, PasswordRequestDto dto) {
 
         // 유저 검색
-        User user = userRepository.findById(loginUserId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+        User user = userRepository.findUserByIdOrElseThrow(loginUserId);
 
         // 비밀번호 검증
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
         }
+
+        return new UserResponseDto(user);
+    }
+
+    /**
+     * 회원 정보 수정
+     *
+     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param dto 사용자 수정 요청 데이터 (비밀번호 포함)
+     * @return 수정된 사용자 정보
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
+     * @throws CustomException 비밀번호 불일치 시 예외 발생
+     */
+    @Transactional
+    @Override
+    public UserResponseDto updateUser(Long loginUserId, UserUpdateRequestDto dto) {
+
+        // 유저 검색
+        User user = userRepository.findUserByIdOrElseThrow(loginUserId);
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
+        }
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(dto.getPassword());
+
+        user.updateUser(encodedPassword, dto.getUserName(), parseBirth(dto.getBirth()),
+                dto.getPhone(), dto.getImageUrl(), dto.getHobby(), dto.getCityName());
 
         return new UserResponseDto(user);
     }
@@ -99,15 +124,15 @@ public class UserServiceImpl implements UserService {
     public User loginUser(LoginRequestDto dto) {
 
         // 이메일로 사용자 조회
-        Optional<User> user = userRepository.findUserByEmail(dto.getEmail());
+        User user = userRepository.findUserByEmailOrElseThrow(dto.getEmail());
 
-        // 사용자가 없거나 비밀번호가 일치하지 않으면 예외 발생
-        if (user.isEmpty() || !passwordEncoder.matches(dto.getPassword(), user.get().getPassword())) {
+        // 비밀번호가 일치하지 않으면 예외 발생
+        if  (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new CustomException(ExceptionCode.LOGIN_FAILED);
         }
 
         // 인증 성공 시 사용자 반환
-        return user.get();
+        return user;
     }
 
     /**
