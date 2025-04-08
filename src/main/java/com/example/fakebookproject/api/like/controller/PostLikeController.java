@@ -27,7 +27,7 @@ public class PostLikeController {
             @PathVariable Long postId
             //, @SessionAttribute(name = "loginUser") LoginDto loginDto
     ) {
-        postLikeService.createPostLike(postId);
+//        postLikeService.createPostLike(postId);
         return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
     }
 
@@ -41,11 +41,14 @@ public class PostLikeController {
     public ResponseEntity<List<FindAllPostLikeResponseDto>> findAllPostLike(
             @PathVariable Long postId
     ) {
-        return ResponseEntity.ok(postLikeService.findAllPostLike(postId));
+//        return ResponseEntity.ok(postLikeService.findAllPostLike(postId));
+        return ResponseEntity.ok(null);
     }
+
 
     /**
      * Post 에 추가된 Like 삭제
+     *
      * @param postId
      * @return
      */
@@ -54,7 +57,7 @@ public class PostLikeController {
             @PathVariable Long postId
             //, @SessionAttribute(name = "loginUser") LoginDto loginDto
     ) {
-        postLikeService.deletePostLike(postId);
+//        postLikeService.deletePostLike(postId);
         return ResponseEntity.ok("좋아요가 취소되었습니다.");
     }
 }
