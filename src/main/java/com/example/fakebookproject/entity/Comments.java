@@ -30,5 +30,5 @@ public class Comments extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
-    private Posts post;
+    private Post post;
 }
