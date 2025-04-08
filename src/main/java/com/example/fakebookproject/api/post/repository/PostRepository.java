@@ -30,10 +30,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     }
 
     /* Post 가 존재하는지 확인 */
-    boolean existsByPost_Id(Long planId);
+    boolean existsById(Long planId);
 
     default void validateExistenceByPost_Id(Long planId) {
-        if (!existsByPost_Id(planId)) {
+        if (!existsById(planId)) {
             throw new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE);
         }
     }
