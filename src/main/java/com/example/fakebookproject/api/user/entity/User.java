@@ -2,19 +2,21 @@ package com.example.fakebookproject.api.user.entity;
 
 import com.example.fakebookproject.common.config.BaseTimeEntity;
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDate;
 
 @Getter
 @Entity
 @Table(name = "users")
-// @SQLDelete(sql = "update users set deleted = true where id = ?")
-// @SQLRestriction("deleted = false")
+// 엔티티 삭제 시 실제로는 삭제하지 않고 is_deleted를 true로 업데이트
+@SQLDelete(sql = "update users set is_deleted = true where id = ?")
+
+// 모든 조회 쿼리에 is_deleted = false 조건을 자동으로 추가 (삭제된 데이터는 조회되지 않음)
+@SQLRestriction("is_deleted = false")
 public class User extends BaseTimeEntity {
 
     // PK

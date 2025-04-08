@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByUserId(Long userId);
+    boolean existsById(Long userId);
 
-    boolean existsByUserEmail(String email);
+    boolean existsByEmail(String email);
 
     Optional<User> findUserById(Long userId);
 
@@ -19,25 +19,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     default void validateExistenceByUserId(Long userId) {
-        if (!existsByUserId(userId)) {
+        if (!existsById(userId)) {
             throw new CustomException(ExceptionCode.NOT_FOUND_USER);
         }
     }
 
     default void validateExistenceByUserEmail(String email) {
-        if (!existsByUserEmail(email)) {
+        if (!existsByEmail(email)) {
             throw new CustomException(ExceptionCode.NOT_FOUND_USER);
         }
-    }
-
-    default User findUserByEmailOrElseThrow(String email) {
-        return findUserByEmail(email)
-                .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
     }
 
     default User findUserByIdOrElseThrow(Long userId) {
         return findUserById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+    }
+
+    default User findUserByEmailOrElseThrow(String email) {
+        return findUserByEmail(email)
+                .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
     }
 
 }

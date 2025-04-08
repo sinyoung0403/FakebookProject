@@ -114,6 +114,27 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 회원 탈퇴 (소프트 딜리트 방식)
+     * 사용자의 비밀번호를 검증한 후, 실제 삭제 대신 is_deleted를 true로 변경
+     *
+     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
+     */
+    @Override
+    public void deleteUser(Long loginUserId, PasswordRequestDto dto) {
+
+        // 유저 검색
+        User user = userRepository.findUserByIdOrElseThrow(loginUserId);
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
+        }
+
+        userRepository.delete(user);
+    }
+
+    /**
      * 로그인 요청 정보를 기반으로 사용자 인증 수행
      *
      * @param dto 로그인 요청 정보 (이메일, 비밀번호)
