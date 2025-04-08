@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface PostLikeService {
 
-    public void createPostLike(Long postId);
+    void createPostLike(Long postId);
 
-    List<FindAllPostLikeResponseDto> findAllLike(Long postId);
+    List<FindAllPostLikeResponseDto> findAllPostLike(Long postId);
+
+    void deletePostLike(Long postId);
 }

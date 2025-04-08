@@ -19,7 +19,7 @@ public class PostLikeServiceImpl implements PostLikeService {
     private final PostLikeRepository postLikeRepository;
 
     /**
-     * Post 에 좋아요 추가
+     * Post 에 Like 추가
      *
      * @param postId
      */
@@ -32,6 +32,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 
         Post findPost = new Post();
 //        Post findPost = PostRepository.findByIdOrElseThrow(postId);
+
         // 2. Entity 로 변환.
         PostLike postLike = new PostLike(findUser, findPost);
 
@@ -41,16 +42,38 @@ public class PostLikeServiceImpl implements PostLikeService {
 
     /**
      * Post 에 추가된 Like 모두 조회
+     *
      * @param postId
      * @return
      */
     @Override
-    public List<FindAllPostLikeResponseDto> findAllLike(Long postId) {
+    public List<FindAllPostLikeResponseDto> findAllPostLike(Long postId) {
         return postLikeRepository.findAllByPost_Id(postId)
                 .stream()
                 .map(FindAllPostLikeResponseDto::from).toList();
     }
 
+    /**
+     * Post 에 추가된 Like 삭제
+     *
+     * @param postId
+     */
+    @Override
+    public void deletePostLike(Long postId) {
+        // 1. 데이터 검증 및 조회 . 실제 테이블이 존재하는 가.
+        // 세션 생길 시
+        User findUser = new User();
+//        User user = UserRepository.findByIdOrElseThrow(userId);
+
+        Post findPost = new Post();
+//        Post findPost = PostRepository.findByIdOrElseThrow(postId);
+
+        // 2. Entity 로 변환
+        PostLike postLike = postLikeRepository.
+
+        // 3. 삭제
+        postLikeRepository.delete(postLike);
+    }
 
 
 }

@@ -23,7 +23,7 @@ public class PostLike {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "post_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
