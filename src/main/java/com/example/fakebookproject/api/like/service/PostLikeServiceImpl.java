@@ -66,9 +66,8 @@ public class PostLikeServiceImpl implements PostLikeService {
     @Override
     public void deletePostLike(Long postId, Long loginUserId) {
         // 1. 데이터 검증 및 조회 . 실제 테이블이 존재하는 가.
-        // 세션 생길 시
         userRepository.validateNotExistenceByUserId(loginUserId);
-        Post findPost = postRepository.findPostByIdOrElseThrow(postId);
+        postRepository.validateNotExistenceByPost_Id(postId);
 
         // 2. Entity 로 변환 추후에 변경해야함.
         PostLike postLike = postLikeRepository.findByPost_IdAndUser_IdOrElseThrow(postId, loginUserId);
