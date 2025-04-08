@@ -24,9 +24,10 @@ public class PostLikeController {
      */
     @PostMapping
     public ResponseEntity<String> createPostLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+            @PathVariable Long postId,
+            @SessionAttribute("loginUser") Long loginUserId
     ) {
+        postLikeService.createPostLike(postId, loginUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
     }
 
@@ -52,10 +53,10 @@ public class PostLikeController {
      */
     @DeleteMapping
     public ResponseEntity<String> deleteLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+            @PathVariable Long postId,
+            @SessionAttribute("loginUser") Long loginUserId
     ) {
-        postLikeService.deletePostLike(postId);
+        postLikeService.deletePostLike(postId, loginUserId);
         return ResponseEntity.ok("좋아요가 취소되었습니다.");
     }
 }
