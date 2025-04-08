@@ -77,6 +77,7 @@ public class User extends BaseTimeEntity {
         this.birth = birth;
         this.gender = gender;
         this.phone = phone;
+        this.isDeleted = false;
     }
 
     // public User (파라미터) {
