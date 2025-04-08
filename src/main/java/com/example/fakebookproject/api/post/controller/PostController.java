@@ -32,23 +32,23 @@ public class PostController {
 
     @GetMapping("/me")
     public ResponseEntity<Page<PostResponseDto>> findMyPost(
-            HttpServletRequest request,
+            @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
 
-        Page<PostResponseDto> responseDto = postService.findMyPost(request, page, size);
+        Page<PostResponseDto> responseDto = postService.findMyPost(loginId, page, size);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<Page<PostResponseDto>> findRelatedPost(
-            HttpServletRequest request,
+            @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        Page<PostResponseDto> responseDto = postService.findRelatedPost(request, page, size);
+        Page<PostResponseDto> responseDto = postService.findRelatedPost(loginId, page, size);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }

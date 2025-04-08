@@ -13,7 +13,7 @@ public interface PostService {
 
     void createPost(PostCreateRequestDto postCreateRequestDto, HttpServletRequest request);
 
-    Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size);
+    Page<PostResponseDto> findMyPost(Long loginId, int page, int size);
 
-    Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size);
+    Page<PostResponseDto> findRelatedPost(Long loginId, int page, int size);
 }

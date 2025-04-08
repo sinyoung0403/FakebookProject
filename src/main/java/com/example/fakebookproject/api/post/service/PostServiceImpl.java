@@ -61,37 +61,19 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
-
-        Object sessionId = session.getAttribute("loginUser");
-
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
+    public Page<PostResponseDto> findMyPost(Long loginId, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(userId, pageable);
+        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(loginId, pageable);
 
         return postPage.map(PostResponseDto::new);
     }
 
     @Override
-    public Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
+    public Page<PostResponseDto> findRelatedPost(Long loginId, int page, int size) {
 
-        Object sessionId = session.getAttribute("user");
-
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
-
-        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
+        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(loginId);
 
         Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
 
