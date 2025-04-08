@@ -13,9 +13,9 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    default Page<Post> findPostByUserIdOrElseThrow(Long userId, Pageable pageable){
+    default Page<Post> findPostByUserIdOrElseThrow(Long userId, Pageable pageable) {
         Page<Post> page = findByUserId(userId, pageable);
-        if(page.isEmpty()){
+        if (page.isEmpty()) {
             throw new CustomException(ExceptionCode.NOT_FOUND_USER);
         }
         return page;
@@ -38,13 +38,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         }
     }
 
-    default Post findPostByIdOrElseThrow(Long id){
-        return findById(id).orElseThrow(()->
+    default Post findPostByIdOrElseThrow(Long id) {
+        return findById(id).orElseThrow(() ->
                 new CustomException(ExceptionCode.NOT_FOUND_POST
                 )
         );
     }
-
 
 
     Page<Post> findByUserId(Long userId, Pageable pageable);
