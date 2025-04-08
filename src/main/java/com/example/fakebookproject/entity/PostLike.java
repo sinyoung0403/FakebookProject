@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "post_like")
 @NoArgsConstructor
-public class PostLikes {
+public class PostLike {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -20,13 +20,13 @@ public class PostLikes {
 
   @ManyToOne
   @JoinColumn(name = "post_id")
-  private Posts posts;
+  private Post posts;
 
   public void setUsers(Users users) {
     this.users = users;
   }
 
-  public void setPosts(Posts posts) {
+  public void setPosts(Post posts) {
     this.posts = posts;
   }
 }
