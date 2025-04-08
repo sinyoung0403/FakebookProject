@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
-@Table(name = "post")
+@Table(name = "posts")
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -21,7 +21,7 @@ public class Post extends BaseTimeEntity {
     private String imageUrl;
 
     @Column(nullable = false, name = "is_deleted")
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 
     @Column(nullable = false)
     private Long likeCount;
@@ -30,4 +30,15 @@ public class Post extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Post(String contents, String imageUrl, User user){
+        this.contents = contents;
+        this.imageUrl = imageUrl;
+        this.user = user;
+        isDeleted = false;
+        likeCount = 0L;
+    }
+
+    public Post() {
+        isDeleted = false;
+    }
 }
