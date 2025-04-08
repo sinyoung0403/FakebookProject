@@ -5,14 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 댓글 생성 요청 DTO
+ * 댓글 수정 요청 DTO
  */
 @Getter
 @AllArgsConstructor
 public class CommentUpdateRequestDto {
 
     /**
-     * 댓글 내용 (필수, 최대 1000자)
+     * 댓글 내용 (최대 1000자)
      */
     @Size(max = 1000, message = "1000자를 초과할 수 없습니다.")
     private final String content;
