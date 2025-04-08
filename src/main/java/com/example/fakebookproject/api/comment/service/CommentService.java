@@ -8,7 +8,7 @@ public interface CommentService {
 
     CommentResponseDto createComment(Long userId, Long postId, String content);
 
-    Page<CommentResponseDto> findAllComments(Long userId, Long postId, Pageable pageable);
+    Page<CommentResponseDto> findAllComments(Long postId, Pageable pageable);
 
     CommentResponseDto updateComment(Long userId, Long commentId, String content);
 
