@@ -30,14 +30,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
         }
     }
 
-    default User findUserByEmailOrElseThrow(String email) {
-        return findUserByEmail(email)
-                .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
-    }
-
     default User findUserByIdOrElseThrow(Long userId) {
         return findUserById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+    }
+
+    default User findUserByEmailOrElseThrow(String email) {
+        return findUserByEmail(email)
+                .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
     }
 
 }
