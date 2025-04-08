@@ -1,5 +1,8 @@
-package com.example.fakebookproject.entity;
+package com.example.fakebookproject.api.comment.entity;
 
+import com.example.fakebookproject.common.config.BaseTimeEntity;
+import com.example.fakebookproject.api.post.entity.Post;
+import com.example.fakebookproject.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +11,7 @@ import org.hibernate.annotations.Check;
 @Getter
 @Entity
 @NoArgsConstructor
-@Check(constraints = "deleted IN ('Y', 'N')")
-public class Comments extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,14 +23,15 @@ public class Comments extends BaseTimeEntity {
     @Column(nullable = false)
     private Long likeCount;
 
-    @Column(length = 1, nullable = false)
-    private String deleted;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
 }
