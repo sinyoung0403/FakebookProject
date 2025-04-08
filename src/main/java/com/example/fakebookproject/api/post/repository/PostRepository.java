@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -33,7 +32,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsById(Long planId);
 
     default void validateNotExistenceByPost_Id(Long planId) {
-        if (!existsById(planId)) {
+        if (existsById(planId)) {
             throw new CustomException(ExceptionCode.NOT_FOUND_POST);
         }
     }
