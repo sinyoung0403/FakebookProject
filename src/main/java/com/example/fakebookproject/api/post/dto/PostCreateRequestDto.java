@@ -1,18 +1,17 @@
 package com.example.fakebookproject.api.post.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class PostResponseDto {
+public class PostCreateRequestDto {
 
-    private final Long id;
+    @NotBlank(message = "내용을 입력해주세요.")
     private final String contents;
+
     private final String imageUrl;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final Long likeCount;
 }
