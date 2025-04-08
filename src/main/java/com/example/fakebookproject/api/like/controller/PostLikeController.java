@@ -9,55 +9,55 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequiredArgsConstructor
-@RequestMapping("/api/posts/{postId}/likes")
+//@RestController
+//@RequiredArgsConstructor
+//@RequestMapping("/api/posts/{postId}/likes")
 public class PostLikeController {
-
-    private final PostLikeService postLikeService;
-
-    /**
-     * Post 에 Like 추가
-     *
-     * @param postId
-     * @return
-     */
-    @PostMapping
-    public ResponseEntity<String> createPostLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
-    ) {
-//        postLikeService.createPostLike(postId);
-        return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
-    }
-
-    /**
-     * Post 에 추가된 Like 모두 조회
-     *
-     * @param postId
-     * @return
-     */
-    @GetMapping
-    public ResponseEntity<List<FindAllPostLikeResponseDto>> findAllPostLike(
-            @PathVariable Long postId
-    ) {
-//        return ResponseEntity.ok(postLikeService.findAllPostLike(postId));
-        return ResponseEntity.ok(null);
-    }
-
-
-    /**
-     * Post 에 추가된 Like 삭제
-     *
-     * @param postId
-     * @return
-     */
-    @DeleteMapping
-    public ResponseEntity<String> deleteLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
-    ) {
-//        postLikeService.deletePostLike(postId);
-        return ResponseEntity.ok("좋아요가 취소되었습니다.");
-    }
+//
+//    private final PostLikeService postLikeService;
+//
+//    /**
+//     * Post 에 Like 추가
+//     *
+//     * @param postId
+//     * @return
+//     */
+//    @PostMapping
+//    public ResponseEntity<String> createPostLike(
+//            @PathVariable Long postId
+//            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+//    ) {
+////        postLikeService.createPostLike(postId);
+//        return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
+//    }
+//
+//    /**
+//     * Post 에 추가된 Like 모두 조회
+//     *
+//     * @param postId
+//     * @return
+//     */
+//    @GetMapping
+//    public ResponseEntity<List<FindAllPostLikeResponseDto>> findAllPostLike(
+//            @PathVariable Long postId
+//    ) {
+////        return ResponseEntity.ok(postLikeService.findAllPostLike(postId));
+//        return ResponseEntity.ok(null);
+//    }
+//
+//
+//    /**
+//     * Post 에 추가된 Like 삭제
+//     *
+//     * @param postId
+//     * @return
+//     */
+//    @DeleteMapping
+//    public ResponseEntity<String> deleteLike(
+//            @PathVariable Long postId
+//            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+//    ) {
+////        postLikeService.deletePostLike(postId);
+//        return ResponseEntity.ok("좋아요가 취소되었습니다.");
+//    }
 }
