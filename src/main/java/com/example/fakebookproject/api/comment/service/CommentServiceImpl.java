@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResponseDto createComment(Long userId, Long postId, String content) {
         User user = userRepository.findUserByIdOrElseThrow(userId);
-        Post post = postRepository.findByIdOrElseThrow(postId);
+        Post post = postRepository.findPostByIdOrElseThrow(postId);
 
         Comment comment = new Comment(user, post, content);
         Comment saved = commentRepository.save(comment);
@@ -51,7 +51,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Page<CommentResponseDto> findAllComments(Long postId, Pageable pageable) {
-        Post post = postRepository.findByIdOrElseThrow(postId);
+        Post post = postRepository.findPostByIdOrElseThrow(postId);
         Page<Comment> comments = commentRepository.findByPost(post, pageable);
 
         return comments.map(CommentResponseDto::new);
@@ -71,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResponseDto updateComment(Long userId, Long commentId, String content) {
-        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
+        Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
@@ -98,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
-        Comment comment = commentRepository.findByIdOrElseThrow(commentId);
+        Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
