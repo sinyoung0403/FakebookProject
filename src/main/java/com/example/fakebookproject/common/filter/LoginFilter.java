@@ -36,7 +36,7 @@ public class LoginFilter implements Filter {
         // 로그인 여부 검증
         if (session == null || session.getAttribute("loginUser") == null) {
             log.warn("로그인되지 않은 사용자 요청: {}", requestURI);
-            throw new CustomException(ExceptionCode.NOT_LOGINED);
+            throw new CustomException(ExceptionCode.NOT_LOGGEDIN);
         }
 
         // 세션 정보 출력
