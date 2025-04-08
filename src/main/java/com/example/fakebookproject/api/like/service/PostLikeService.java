@@ -1,4 +1,5 @@
 package com.example.fakebookproject.api.like.service;
 
-public class PostLikeService {
+public interface PostLikeService {
+    public void createPostLike(Long postId);
 }

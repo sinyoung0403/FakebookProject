@@ -11,7 +11,7 @@ import org.hibernate.mapping.ToOne;
 
 @Getter
 @Entity
-@Table(name = "comment_like")
+@Table(name = "comment_likes")
 @NoArgsConstructor
 public class CommentLike {
 
