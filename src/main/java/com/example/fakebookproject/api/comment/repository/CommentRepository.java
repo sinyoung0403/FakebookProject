@@ -15,9 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     boolean existsById(Long commentId);
+
     Page<Comment> findByPost(Post post, Pageable pageable);
 
-    default Comment findByIdOrElseThrow(Long id) {
+    default Comment findCommentByIdOrElseThrow(Long id) {
         return findById(id).orElseThrow(() ->
                 new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
         );
