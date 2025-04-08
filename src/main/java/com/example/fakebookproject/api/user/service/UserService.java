@@ -13,6 +13,8 @@ public interface UserService {
 
     UserResponseDto updateUser(Long loginUserId, UserUpdateRequestDto dto);
 
+    void deleteUser(Long loginUserId, PasswordRequestDto dto);
+
     User loginUser(LoginRequestDto dto);
 
 }
