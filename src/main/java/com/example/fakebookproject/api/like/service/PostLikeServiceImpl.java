@@ -30,8 +30,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         User findUser = new User();
 //        User user = UserRepository.findByIdOrElseThrow(userId);
 
-        Post findPost = new Post();
-//        Post findPost = PostRepository.findByIdOrElseThrow(postId);
+        Post findPost = PostRepository.findByIdOrElseThrow(postId);
 
         // 2. Entity 로 변환.
         PostLike postLike = new PostLike(findUser, findPost);
@@ -69,7 +68,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 //        Post findPost = PostRepository.findByIdOrElseThrow(postId);
 
         // 2. Entity 로 변환
-        PostLike postLike = postLikeRepository.
+        PostLike postLike = postLikeRepository.;
 
         // 3. 삭제
         postLikeRepository.delete(postLike);
