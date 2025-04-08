@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -36,15 +35,15 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     /* Post 가 존재하는지 확인 */
     boolean existsById(Long planId);
 
-    default void validateExistenceByPost_Id(Long planId) {
-        if (!existsById(planId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE);
+    default void validateNotExistenceByPost_Id(Long planId) {
+        if (existsById(planId)) {
+            throw new CustomException(ExceptionCode.NOT_FOUND_POST);
         }
     }
 
     default Post findPostByIdOrElseThrow(Long id){
         return findById(id).orElseThrow(()->
-                new CustomException(ExceptionCode.NOT_FOUND_SCHEDULE
+                new CustomException(ExceptionCode.NOT_FOUND_POST
                 )
         );
     }

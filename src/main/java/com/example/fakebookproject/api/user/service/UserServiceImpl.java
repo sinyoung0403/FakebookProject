@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto createUser(UserCreateRequestDto dto) {
 
         // 이메일 존재 여부 확인
-        userRepository.validateExistenceByUserEmail(dto.getEmail());
+        userRepository.validateNotExistenceByUserEmail(dto.getEmail());
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
