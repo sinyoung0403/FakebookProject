@@ -25,8 +25,8 @@ public enum ExceptionCode {
     DELETE_FAILED(HttpStatus.NOT_FOUND, "DELETE_FAILED", "데이터 삭제에 실패했습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다."),
     NO_CHANGES(HttpStatus.NO_CONTENT, "NO_CHANGES", "변경된 내용이 없습니다."),
+    LIKE_FAILED(HttpStatus.BAD_REQUEST, "LIKE_FAILED", "본인에게 좋아요를 추가할 수 없습니다."),
     RELOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "RELOAD_FAILED", "데이터를 불러오는 데 실패했습니다.");
-
     /**
      * Http 상태 코드
      */
