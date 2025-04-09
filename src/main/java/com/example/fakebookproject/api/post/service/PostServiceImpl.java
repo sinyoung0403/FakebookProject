@@ -10,6 +10,7 @@ import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
+import com.example.fakebookproject.common.dto.PageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -53,17 +54,25 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Page<PostResponseDto> findMyPost(Long loginId, int page, int size) {
+    public PageResponse<PostResponseDto> findMyPost(Long loginId, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(loginId, pageable);
 
-        return postPage.map(PostResponseDto::new);
-    }
+
+        Page<PostResponseDto> dtoPage = postPage.map(PostResponseDto::new);
+
+        return new PageResponse<>(
+                dtoPage.getContent(),
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages()
+        );    }
 
     @Override
-    public Page<PostResponseDto> findRelatedPost(Long loginId, int page, int size) {
+    public PageResponse<PostResponseDto> findRelatedPost(Long loginId, int page, int size) {
 
         List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAccepted(loginId);
 
@@ -71,7 +80,16 @@ public class PostServiceImpl implements PostService{
 
         Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
 
-        return posts.map(PostResponseDto::new);
+        Page<PostResponseDto> dtoPage = posts.map(PostResponseDto::new);
+
+
+        return new PageResponse<>(
+                dtoPage.getContent(),
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages()
+        );
 
     }
 
