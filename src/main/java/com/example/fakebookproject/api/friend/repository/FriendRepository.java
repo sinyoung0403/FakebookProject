@@ -29,6 +29,17 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
             """)
     List<Long> findAllByUserIdAndStatusAcceptedOrElseThrow(@Param("userId") Long userId);
 
+    @Query("""
+                SELECT CASE
+                            WHEN f.requestUser.id = :userId THEN f.responseUser.id 
+                            ELSE f.requestUser.id 
+                       END
+                FROM FriendStatus f
+                WHERE (f.requestUser.id = :userId OR f.responseUser.id = :userId)
+                  AND f.status = 1
+            """)
+    List<Long> findAllByUserIdAndStatusAccepted(@Param("userId") Long userId);
+
 //    /**
 //     * 추천 친구 목록
 //     * @param userId
