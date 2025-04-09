@@ -3,8 +3,11 @@ package com.example.fakebookproject.api.user.repository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -40,4 +43,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
     }
 
+    Page<User> findByIdIn(Collection<Long> ids, Pageable pageable);
 }
