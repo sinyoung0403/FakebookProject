@@ -31,21 +31,22 @@ public class CommentLikeServiceImpl implements CommentLikeService {
      * @param postId
      * @param commentId
      * @param loginUserId
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException Post 가 존재하지 않으면 예외 발생 (NOT_FOUND_POST)
+     * @throws CustomException Comment 가 존재하지 않으면 예외 발생 (NOT_FOUND_COMMENT)
+     * @throws CustomException User 가 존재하면 예외 발생 (USER_ALREADY_EXISTS)
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (LIKE_FAILED)
      */
     @Transactional
     @Override
     public void createCommentLike(Long postId, Long commentId, Long loginUserId) {
 
         // 1. Like 추가 전 유효성 검사:
-        // - User 가 존재하지 않으면 예외 발생
-        // - Post 이 존재하지 않으면 예외 발생
-        // - Comment 가 존재하지 않으면 예외 발생
         User findUser = userRepository.findUserByIdOrElseThrow(loginUserId);
         postRepository.findPostByIdOrElseThrow(postId);
         Comment findComment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         // 2. commentLikeRepository User 존재 여부 유효성 검사
-        // - 존재하지 않으면 예외 발생
         commentLikeRepository.validateNotExistenceByUserId(loginUserId);
 
         // 3. 본인 댓글인지 확인
@@ -84,20 +85,21 @@ public class CommentLikeServiceImpl implements CommentLikeService {
      * @param postId
      * @param commentId
      * @param loginUserId
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException Post 가 존재하지 않으면 예외 발생 (NOT_FOUND_POST)
+     * @throws CustomException Comment 가 존재하지 않으면 예외 발생 (NOT_FOUND_COMMENT)
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException User, Comment 가 존재하지 않으면 예외 발생 (NOT_FOUND_POST)
      */
     @Override
     public void deleteCommentLike(Long postId, Long commentId, Long loginUserId) {
 
         // 1. Like 추가 전 유효성 검사:
-        // - User 가 존재하지 않으면 예외 발생
-        // - Post 이 존재하지 않으면 예외 발생
-        // - Comment 가 존재하지 않으면 예외 발생
         userRepository.validateExistenceByUserId(loginUserId);
         postRepository.validateExistenceByPost_Id(postId);
         commentRepository.validateExistenceByCommentId(commentId);
 
         // 2. commentLikeRepository User 존재 여부 유효성 검사
-        // - 존재하지 않으면 예외 발생
         commentLikeRepository.validateExistenceByUserId(loginUserId);
 
         // 3. Entity 생성
