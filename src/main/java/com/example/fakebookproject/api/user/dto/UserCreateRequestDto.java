@@ -2,6 +2,7 @@ package com.example.fakebookproject.api.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -33,7 +34,7 @@ public class UserCreateRequestDto {
     private final String userName;
 
     // 생년월일
-    @NotBlank(message = "생년월일은 필수 입력값입니다.")
+    @NotNull(message = "생년월일은 필수 입력값입니다.")
     @JsonFormat(pattern = "yyyyMMdd")
     private final LocalDate birth;
 

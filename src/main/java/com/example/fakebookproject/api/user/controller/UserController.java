@@ -26,7 +26,8 @@ public class UserController {
      */
     @PostMapping("/signup")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserCreateRequestDto dto) {
-        return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
+        UserResponseDto responseDto = userService.createUser(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /**
@@ -37,7 +38,8 @@ public class UserController {
      */
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDto> findUserById(@PathVariable Long userId) {
-        return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
+        UserResponseDto responseDto = userService.findUserById(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
@@ -50,7 +52,8 @@ public class UserController {
     @PostMapping("/mypage")
     public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId,
                                                                @RequestBody @Valid PasswordRequestDto dto) {
-        return new ResponseEntity<>(userService.findUserByLoginUserId(loginUserId, dto), HttpStatus.OK);
+        UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
@@ -63,7 +66,8 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<UserResponseDto> updateUser(@SessionAttribute("loginUser") Long loginUserId,
                                                       @RequestBody @Valid UserUpdateRequestDto dto) {
-        return new ResponseEntity<>(userService.updateUser(loginUserId, dto), HttpStatus.OK);
+        UserResponseDto responseDto = userService.updateUser(loginUserId, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
@@ -78,7 +82,7 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@SessionAttribute ("loginUser") Long loginUserId,
                                            @RequestBody @Valid PasswordRequestDto dto) {
         userService.deleteUser(loginUserId, dto);
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -99,7 +103,7 @@ public class UserController {
         // 세션에 사용자 ID 저장
         session.setAttribute("loginUser", user.getId());
 
-        return new ResponseEntity<>("로그인 성공", HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
     }
 
     /**
@@ -118,7 +122,7 @@ public class UserController {
             session.invalidate(); // 세션 무효화
         }
 
-        return new ResponseEntity<>("로그아웃", HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃");
     }
 
 }
