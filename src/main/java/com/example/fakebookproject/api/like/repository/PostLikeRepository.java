@@ -21,4 +21,18 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     default PostLike findByPost_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
         return findByPost_IdAndUser_Id(postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
     }
+
+    boolean existsByUser_id(Long userId);
+
+    default void validateExistenceByUserId(Long userId) {
+        if (!existsByUser_id(userId)) {
+            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
+        }
+    }
+
+    default void validateNotExistenceByUserId(Long userId) {
+        if (existsByUser_id(userId)) {
+            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
+        }
+    }
 }

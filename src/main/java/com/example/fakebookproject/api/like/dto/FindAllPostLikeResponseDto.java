@@ -18,6 +18,6 @@ public class FindAllPostLikeResponseDto {
      * @return
      */
     public static FindAllPostLikeResponseDto from(PostLike postLike) {
-        return new FindAllPostLikeResponseDto(postLike.getUser().getImageUrl(), postLike.getUser().getUserName());
+        return new FindAllPostLikeResponseDto(postLike.getUser().getUserName(), postLike.getUser().getImageUrl());
     }
 }
