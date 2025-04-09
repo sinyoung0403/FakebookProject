@@ -8,7 +8,10 @@ import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.dto.LoginRequestDto;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.exception.CustomException;
+import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,13 +44,18 @@ public class PostLikeServiceImpl implements PostLikeService {
         // - 이미 존재하면 예외 발생
         postLikeRepository.validateNotExistenceByUserId(loginUserId);
 
-        // 3. Entity 생성
+        // 3. 본인 게시물인지 확인
+        if (findPost.getUser().getId() == loginUserId) {
+            throw new CustomException(ExceptionCode.LIKE_FAILED);
+        }
+
+        // 4. Entity 생성
         PostLike postLike = new PostLike(findUser, findPost);
 
-        // 4. postLikeRepository 추가
+        // 5. postLikeRepository 추가
         postLikeRepository.save(postLike);
 
-        // 5. PostRepository 에서 like count Column +1
+        // 6. PostRepository 에서 like count Column +1
         postRepository.increaseLikeCount(postId);
     }
 

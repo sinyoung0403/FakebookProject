@@ -10,6 +10,8 @@ import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.dto.LoginRequestDto;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.exception.CustomException;
+import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,13 +49,18 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         // - 존재하지 않으면 예외 발생
         commentLikeRepository.validateNotExistenceByUserId(loginUserId);
 
-        // 3. Entity 생성
+        // 3. 본인 댓글인지 확인
+        if (findComment.getUser().getId() == loginUserId) {
+            throw new CustomException(ExceptionCode.LIKE_FAILED);
+        }
+
+        // 4. Entity 생성
         CommentLike commentLike = new CommentLike(findUser, findComment);
 
-        // 4. commentLikeRepository 추가
+        // 5. commentLikeRepository 추가
         commentLikeRepository.save(commentLike);
 
-        // 5. commentRepository 에서 like count Column +1
+        // 6. commentRepository 에서 like count Column +1
         commentRepository.increaseLikeCount(commentId);
     }
 
