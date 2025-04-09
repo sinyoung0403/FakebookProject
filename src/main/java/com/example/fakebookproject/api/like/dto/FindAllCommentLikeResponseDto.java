@@ -14,14 +14,4 @@ public class FindAllCommentLikeResponseDto {
         this.userName = commentLike.getUser().getUserName();
         this.imageUrl = commentLike.getUser().getImageUrl();
     }
-
-    /**
-     * Comment Like 를 ResponseDto 로 변환해주는 정적 메서드
-     *
-     * @param commentLike
-     * @return
-     */
-    public static FindAllCommentLikeResponseDto from(CommentLike commentLike) {
-        return new FindAllCommentLikeResponseDto(commentLike.getUser().getImageUrl(), commentLike.getUser().getUserName());
-    }
 }
