@@ -25,27 +25,46 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
+    /**
+     * Comment 에 Like 추가
+     *
+     * @param postId
+     * @param commentId
+     * @param loginUserId
+     */
     @Transactional
     @Override
     public void createCommentLike(Long postId, Long commentId, Long loginUserId) {
-        // 1. 데이터 검증 및 조회
+        // 1. Like 추가 전 유효성 검사:
+        // - User 가 존재하지 않으면 예외 발생
+        // - Post 이 존재하지 않으면 예외 발생
+        // - Comment 가 존재하지 않으면 예외 발생
         User findUser = userRepository.findUserByIdOrElseThrow(loginUserId);
         postRepository.findPostByIdOrElseThrow(postId);
         Comment findComment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
-        // 2. 로그인 유저 Like 검증
+        // 2. commentLikeRepository User 존재 여부 유효성 검사
+        // - 존재하지 않으면 예외 발생
         commentLikeRepository.validateNotExistenceByUserId(loginUserId);
 
-        // 3. Entity 변환
+        // 3. Entity 생성
         CommentLike commentLike = new CommentLike(findUser, findComment);
 
-        // 4. Comment 좋아요 추가
+        // 4. commentLikeRepository 추가
         commentLikeRepository.save(commentLike);
 
-        // 5. Comment Table Like Count 추가
+        // 5. commentRepository 에서 like count Column +1
         commentRepository.increaseLikeCount(commentId);
     }
 
+    /**
+     * Comment 에 추가된 Like 모두 조회
+     *
+     * @param postId
+     * @param commentId
+     * @param loginUserId
+     * @return 좋아요를 누른 사용자 (사용자 이름, 이미지 URL) List
+     */
     @Override
     public List<FindAllCommentLikeResponseDto> findAllCommentLike(Long postId, Long commentId, Long loginUserId) {
         return commentLikeRepository.findAllByComment_Id(commentId)
@@ -53,20 +72,34 @@ public class CommentLikeServiceImpl implements CommentLikeService {
                 .map(FindAllCommentLikeResponseDto::from).toList();
     }
 
+    /**
+     * Comment 에 추가된 Like 삭제
+     *
+     * @param postId
+     * @param commentId
+     * @param loginUserId
+     */
     @Override
     public void deleteCommentLike(Long postId, Long commentId, Long loginUserId) {
-        // 1. 데이터 검증 및 조회
+        // 1. Like 추가 전 유효성 검사:
+        // - User 가 존재하지 않으면 예외 발생
+        // - Post 이 존재하지 않으면 예외 발생
+        // - Comment 가 존재하지 않으면 예외 발생
         userRepository.validateExistenceByUserId(loginUserId);
 //        postRepository.validateExistenceByPost_Id(postId);
         commentRepository.validateExistenceByCommentId(commentId);
 
-        // 2. 로그인 유저 Like 검증
+        // 2. commentLikeRepository User 존재 여부 유효성 검사
+        // - 존재하지 않으면 예외 발생
         commentLikeRepository.validateExistenceByUserId(loginUserId);
 
-        // 3. Entity 변환
+        // 3. Entity 생성
         CommentLike commentLike = commentLikeRepository.findByComment_IdAndUser_IdOrElseThrow(postId, loginUserId);
 
-        // 4. 삭제
+        // 4. commentLikeRepository 삭제
         commentLikeRepository.delete(commentLike);
+
+        // 5. commentRepository 에서 like count Column -1
+        commentRepository.increaseLikeCount(postId);
     }
 }
