@@ -20,7 +20,7 @@ public class PostLikeController {
      * Post 에 Like 추가
      *
      * @param postId
-     * @return
+     * @return String : 성공 여부
      */
     @PostMapping
     public ResponseEntity<String> createPostLike(
@@ -35,7 +35,7 @@ public class PostLikeController {
      * Post 에 추가된 Like 모두 조회
      *
      * @param postId
-     * @return
+     * @return 좋아요를 누른 사용자 (사용자 이름, 이미지 URL) List
      */
     @GetMapping
     public ResponseEntity<List<FindAllPostLikeResponseDto>> findAllPostLike(
@@ -49,7 +49,7 @@ public class PostLikeController {
      * Post 에 추가된 Like 삭제
      *
      * @param postId
-     * @return
+     * @return String : 성공 여부
      */
     @DeleteMapping
     public ResponseEntity<String> deleteLike(
