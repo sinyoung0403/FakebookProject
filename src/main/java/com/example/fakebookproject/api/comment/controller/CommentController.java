@@ -32,11 +32,9 @@ public class CommentController {
      * @return 생성된 댓글 정보
      */
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(
-            @NotNull @PathVariable Long postId,
-            @Valid @RequestBody CommentCreateRequestDto requestDto,
-            @SessionAttribute("loginUser") Long loginUserId
-    ) {
+    public ResponseEntity<CommentResponseDto> createComment(@NotNull @PathVariable Long postId,
+                                                            @Valid @RequestBody CommentCreateRequestDto requestDto,
+                                                            @SessionAttribute("loginUser") Long loginUserId) {
         CommentResponseDto response = commentService.createComment(loginUserId, postId, requestDto.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -68,11 +66,9 @@ public class CommentController {
      * @return 수정된 댓글 정보
      */
     @PostMapping("/{commentId}")
-    public ResponseEntity<CommentResponseDto> updateComment(
-            @NotNull @PathVariable Long commentId,
-            @Valid @RequestBody CommentUpdateRequestDto requestDto,
-            @SessionAttribute("loginUser") Long loginUserId
-    ) {
+    public ResponseEntity<CommentResponseDto> updateComment(@NotNull @PathVariable Long commentId,
+                                                            @Valid @RequestBody CommentUpdateRequestDto requestDto,
+                                                            @SessionAttribute("loginUser") Long loginUserId) {
         CommentResponseDto response = commentService.updateComment(loginUserId, commentId, requestDto.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -86,10 +82,8 @@ public class CommentController {
      * @return 성공 시 204 No Content 응답
      */
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(
-            @NotNull @PathVariable Long commentId,
-            @SessionAttribute("loginUser") Long loginUserId
-    ) {
+    public ResponseEntity<Void> deleteComment(@NotNull @PathVariable Long commentId,
+                                              @SessionAttribute("loginUser") Long loginUserId) {
         commentService.deleteComment(loginUserId, commentId);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
