@@ -4,10 +4,10 @@ import com.example.fakebookproject.api.comment.dto.CommentCreateRequestDto;
 import com.example.fakebookproject.api.comment.dto.CommentResponseDto;
 import com.example.fakebookproject.api.comment.dto.CommentUpdateRequestDto;
 import com.example.fakebookproject.api.comment.service.CommentService;
+import com.example.fakebookproject.common.dto.PageResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -32,12 +32,14 @@ public class CommentController {
      * @return 생성된 댓글 정보
      */
     @PostMapping
-    public ResponseEntity<CommentResponseDto> createComment(@NotNull @PathVariable Long postId,
-                                                            @Valid @RequestBody CommentCreateRequestDto requestDto,
-                                                            @SessionAttribute("loginUser") Long loginUserId) {
+    public ResponseEntity<CommentResponseDto> createComment(
+            @NotNull @PathVariable Long postId,
+            @Valid @RequestBody CommentCreateRequestDto requestDto,
+            @SessionAttribute("loginUser") Long loginUserId
+    ) {
         CommentResponseDto response = commentService.createComment(loginUserId, postId, requestDto.getContent());
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -48,13 +50,13 @@ public class CommentController {
      * @return 조회된 댓글 목록 (페이징 처리 포함)
      */
     @GetMapping
-    public ResponseEntity<Page<CommentResponseDto>> findAllComments(
+    public ResponseEntity<PageResponse<CommentResponseDto>> findAllComments(
             @NotNull @PathVariable Long postId,
             @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
     ) {
-        Page<CommentResponseDto> response = commentService.findAllComments(postId, pageable);
+        PageResponse<CommentResponseDto> response = commentService.findAllComments(postId, pageable);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -66,12 +68,15 @@ public class CommentController {
      * @return 수정된 댓글 정보
      */
     @PostMapping("/{commentId}")
-    public ResponseEntity<CommentResponseDto> updateComment(@NotNull @PathVariable Long commentId,
-                                                            @Valid @RequestBody CommentUpdateRequestDto requestDto,
-                                                            @SessionAttribute("loginUser") Long loginUserId) {
-        CommentResponseDto response = commentService.updateComment(loginUserId, commentId, requestDto.getContent());
+    public ResponseEntity<CommentResponseDto> updateComment(
+            @NotNull @PathVariable Long postId,
+            @NotNull @PathVariable Long commentId,
+            @Valid @RequestBody CommentUpdateRequestDto requestDto,
+            @SessionAttribute("loginUser") Long loginUserId
+    ) {
+        CommentResponseDto response = commentService.updateComment(loginUserId, postId, commentId, requestDto.getContent());
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -82,10 +87,13 @@ public class CommentController {
      * @return 성공 시 204 No Content 응답
      */
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@NotNull @PathVariable Long commentId,
-                                              @SessionAttribute("loginUser") Long loginUserId) {
-        commentService.deleteComment(loginUserId, commentId);
+    public ResponseEntity<Void> deleteComment(
+            @NotNull @PathVariable Long postId,
+            @NotNull @PathVariable Long commentId,
+            @SessionAttribute("loginUser") Long loginUserId
+    ) {
+        commentService.deleteComment(loginUserId, postId, commentId);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }
