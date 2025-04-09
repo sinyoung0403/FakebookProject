@@ -3,7 +3,6 @@ package com.example.fakebookproject.api.friend.entity;
 import com.example.fakebookproject.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
