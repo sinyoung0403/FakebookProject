@@ -23,8 +23,8 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
         );
     }
-    default void validateNotExistenceByCommentId(Long commentId) {
-        if (existsById(commentId)) {
+    default void validateExistenceByCommentId(Long commentId) {
+        if (!existsById(commentId)) {
             throw new CustomException(ExceptionCode.NOT_FOUND_COMMENT);
         }
     }
