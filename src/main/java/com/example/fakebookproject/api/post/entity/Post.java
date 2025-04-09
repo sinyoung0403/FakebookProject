@@ -41,4 +41,9 @@ public class Post extends BaseTimeEntity {
     public Post() {
         isDeleted = false;
     }
+
+    public void updatePost(String contents, String imageUrl){
+        this.contents = contents;
+        this.imageUrl = imageUrl;
+    }
 }

@@ -3,18 +3,22 @@ package com.example.fakebookproject.api.post.repository;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    default Page<Post> findPostByUserIdOrElseThrow(Long userId, Pageable pageable) {
+    default Page<Post> findPostByUserIdOrElseThrow(Long userId, Pageable pageable){
         Page<Post> page = findByUserId(userId, pageable);
-        if (page.isEmpty()) {
+        if(page.isEmpty()){
             throw new CustomException(ExceptionCode.NOT_FOUND_USER);
         }
         return page;
@@ -37,12 +41,23 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         }
     }
 
-    default Post findPostByIdOrElseThrow(Long id) {
-        return findById(id).orElseThrow(() ->
+    default Post findPostByIdOrElseThrow(Long id){
+        return findById(id).orElseThrow(()->
                 new CustomException(ExceptionCode.NOT_FOUND_POST
                 )
         );
     }
+
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Post p SET p.likeCount = p.likeCount + 1 WHERE p.id = :postId")
+    void increaseLikeCount(@Param("postId") Long postId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Post p SET p.likeCount = p.likeCount - 1 WHERE p.id = :postId")
+    void decreaseLikeCount(@Param("postId") Long postId);
 
 
     Page<Post> findByUserId(Long userId, Pageable pageable);
