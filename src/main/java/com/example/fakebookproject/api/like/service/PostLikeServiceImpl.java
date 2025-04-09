@@ -70,7 +70,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         // 해당 Post Id 의 Like 를 추가한 사용자 모두 조회
         return postLikeRepository.findAllByPost_Id(postId)
                 .stream()
-                .map(FindAllPostLikeResponseDto::from).toList();
+                .map(FindAllPostLikeResponseDto::new).toList();
     }
 
     /**

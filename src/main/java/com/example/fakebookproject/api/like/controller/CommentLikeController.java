@@ -2,7 +2,6 @@ package com.example.fakebookproject.api.like.controller;
 
 import com.example.fakebookproject.api.like.dto.FindAllCommentLikeResponseDto;
 import com.example.fakebookproject.api.like.service.CommentLikeService;
-import com.example.fakebookproject.api.user.dto.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
