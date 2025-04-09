@@ -57,6 +57,6 @@ public class PostLikeController {
             @SessionAttribute("loginUser") Long loginUserId
     ) {
         postLikeService.deletePostLike(postId, loginUserId);
-        return ResponseEntity.ok("좋아요가 취소되었습니다.");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("좋아요가 취소되었습니다.");
     }
 }
