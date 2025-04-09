@@ -54,7 +54,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     public void deleteCommentLike(Long postId, Long commentId, Long loginUserId) {
         // 1. 데이터 검증 및 조회
         userRepository.validateNotExistenceByUserId(loginUserId);
-        postRepository.validateNotExistenceByPost_Id(postId);
+//        postRepository.validateExistenceByPost_Id(postId);
         commentRepository.validateNotExistenceByCommentId(commentId);
 
         // 2. Entity 변환
