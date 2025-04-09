@@ -1,11 +1,12 @@
 package com.example.fakebookproject.api.friend.service;
 
-import com.example.fakebookproject.api.friend.dto.FriendPageResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
+import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.api.friend.entity.FriendStatus;
 import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.dto.PageResponse;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +31,7 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public FriendResponseDto requestFriend(Long requestUserId, Long responseUserId) {
+    public FriendStatusResponseDto requestFriend(Long requestUserId, Long responseUserId) {
 
         User requestUser = userRepository.findById(requestUserId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
@@ -42,10 +42,14 @@ public class FriendServiceImpl implements FriendService {
         FriendStatus friendStatus =new FriendStatus();
         friendStatus.setUser(requestUser, responseUser);
 
+        //같은 친구에게 다시 한 번 친구 요청 할 경우, "이미 친구 신청한 회원입니다." 에러
+        //**************에러 코드 만들어야 하나요??******************************
+
         friendRepository.save(friendStatus);
 
-        return new FriendResponseDto(
-                friendStatus.getId(),
+        return new FriendStatusResponseDto(
+                friendStatus.getRequestUser().getId(),
+                friendStatus.getResponseUser().getId(),
                 friendStatus.getStatus()
         );
     }
@@ -58,13 +62,21 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public Page<FriendPageResponseDto> findMyFriends(Long userId, int page, int size) {
+    public PageResponse<FriendResponseDto> findMyFriends(Long userId, int page, int size) {
 
         List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
 
         Page<User> friendPage = userRepository.findByIdIn(friendIds, PageRequest.of(page,size));
 
-        return friendPage.map(user -> new FriendPageResponseDto(user.getUserName(), user.getImageUrl()));
+        Page<FriendResponseDto> friendResponseDtoPage = friendPage.map(friend -> new FriendResponseDto(friend.getUserName(), friend.getImageUrl()));
+
+        return new PageResponse<>(
+                friendResponseDtoPage.getContent(),
+                friendResponseDtoPage.getNumber(),
+                friendResponseDtoPage.getSize(),
+                friendResponseDtoPage.getTotalElements(),
+                friendResponseDtoPage.getTotalPages()
+        );
     }
 
     /**
@@ -75,7 +87,7 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public Page<FriendPageResponseDto> recommendFriends(Long userId, int page, int size) {
+    public PageResponse<FriendResponseDto> recommendFriends(Long userId, int page, int size) {
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
@@ -84,7 +96,15 @@ public class FriendServiceImpl implements FriendService {
 
         Page<User> recommendationPage = userRepository.findByIdIn(recommendationList, PageRequest.of(page,size));
 
-        return recommendationPage.map(user -> new FriendPageResponseDto(user.getUserName(), user.getImageUrl()));
+        Page<FriendResponseDto> friendResponseDtoPage = recommendationPage.map(friend -> new FriendResponseDto(friend.getUserName(), friend.getImageUrl()));
+
+        return new PageResponse<>(
+                friendResponseDtoPage.getContent(),
+                friendResponseDtoPage.getNumber(),
+                friendResponseDtoPage.getSize(),
+                friendResponseDtoPage.getTotalElements(),
+                friendResponseDtoPage.getTotalPages()
+        );
     }
 
     /**
@@ -95,13 +115,21 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public Page<FriendPageResponseDto> receivedFriends(Long userId, int page, int size) {
+    public PageResponse<FriendResponseDto> receivedFriends(Long userId, int page, int size) {
 
         List<Long> receivedList = friendRepository.findReceivedAllByUserIdOrElseThrow(userId);
 
         Page<User> receivedPage = userRepository.findByIdIn(receivedList, PageRequest.of(page,size));
 
-        return receivedPage.map(user -> new FriendPageResponseDto(user.getUserName(), user.getImageUrl()));
+        Page<FriendResponseDto> friendResponseDtoPage = receivedPage.map(friend -> new FriendResponseDto(friend.getUserName(), friend.getImageUrl()));
+
+        return new PageResponse<>(
+                friendResponseDtoPage.getContent(),
+                friendResponseDtoPage.getNumber(),
+                friendResponseDtoPage.getSize(),
+                friendResponseDtoPage.getTotalElements(),
+                friendResponseDtoPage.getTotalPages()
+        );
     }
 
     /**
@@ -112,13 +140,21 @@ public class FriendServiceImpl implements FriendService {
      * @return
      */
     @Override
-    public Page<FriendPageResponseDto> sentFriends(Long userId, int page, int size) {
+    public PageResponse<FriendResponseDto> sentFriends(Long userId, int page, int size) {
 
         List<Long> sentList = friendRepository.findSentAllByUserIdOrElseThrow(userId);
 
         Page<User> sentPage = userRepository.findByIdIn(sentList, PageRequest.of(page,size));
 
-        return sentPage.map(user -> new FriendPageResponseDto(user.getUserName(), user.getImageUrl()));
+        Page<FriendResponseDto> friendResponseDtoPage = sentPage.map(friend -> new FriendResponseDto(friend.getUserName(), friend.getImageUrl()));
+
+        return new PageResponse<>(
+                friendResponseDtoPage.getContent(),
+                friendResponseDtoPage.getNumber(),
+                friendResponseDtoPage.getSize(),
+                friendResponseDtoPage.getTotalElements(),
+                friendResponseDtoPage.getTotalPages()
+        );
     }
 
     /**
