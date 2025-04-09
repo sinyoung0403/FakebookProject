@@ -30,6 +30,9 @@ public class PostLikeServiceImpl implements PostLikeService {
      *
      * @param postId
      * @param loginUserId
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException Post 가 존재하지 않으면 예외 발생 (NOT_FOUND_POST)
+     * @throws CustomException User 가 존재하면 예외 발생 (USER_ALREADY_EXISTS)
      * @throws CustomException User 가 존재하지 않으면 예외 발생 (LIKE_FAILED)
      */
     @Override
@@ -41,7 +44,6 @@ public class PostLikeServiceImpl implements PostLikeService {
         Post findPost = postRepository.findPostByIdOrElseThrow(postId);
 
         // 2. postLikeRepository User 존재 여부 유효성 검사
-        // - 이미 존재하면 예외 발생
         postLikeRepository.validateNotExistenceByUserId(loginUserId);
 
         // 3. 본인 게시물인지 확인
@@ -70,7 +72,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         // 해당 Post Id 의 Like 를 추가한 사용자 모두 조회
         return postLikeRepository.findAllByPost_Id(postId)
                 .stream()
-                .map(FindAllPostLikeResponseDto::from).toList();
+                .map(FindAllPostLikeResponseDto::new).toList();
     }
 
     /**
@@ -78,18 +80,18 @@ public class PostLikeServiceImpl implements PostLikeService {
      *
      * @param postId
      * @param loginUserId
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException Post 가 존재하지 않으면 예외 발생 (NOT_FOUND_POST)
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (NOT_FOUND_USER)
      */
     @Transactional
     @Override
     public void deletePostLike(Long postId, Long loginUserId) {
         // 1. Like 추가 전 유효성 검사:
-        // - User 가 존재하지 않으면 예외 발생
-        // - Post 이 존재하지 않으면 예외 발생
         userRepository.validateExistenceByUserId(loginUserId);
         postRepository.validateExistenceByPost_Id(postId);
 
         // 2. postLikeRepository User 존재 여부 유효성 검사
-        // - 존재하지 않으면 예외 발생
         postLikeRepository.validateExistenceByUserId(loginUserId);
 
         // 3. Entity 생성

@@ -2,7 +2,6 @@ package com.example.fakebookproject.api.like.controller;
 
 import com.example.fakebookproject.api.like.dto.FindAllCommentLikeResponseDto;
 import com.example.fakebookproject.api.like.service.CommentLikeService;
-import com.example.fakebookproject.api.user.dto.LoginRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class CommentLikeController {
      * @param post_id
      * @param commentId
      * @param loginUserId
-     * @return String : 성공 여부
+     * @return String : 성공 여부 | 201 CREATED
      */
     @PostMapping
     public ResponseEntity<String> createCommentLike(
@@ -41,7 +40,7 @@ public class CommentLikeController {
      * @param post_id
      * @param commentId
      * @param loginUserId
-     * @return 좋아요를 누른 사용자 (사용자 이름, 이미지 URL) List
+     * @return 좋아요를 누른 사용자 (사용자 이름, 이미지 URL) List | 201 CREATED
      */
     @GetMapping
     public ResponseEntity<List<FindAllCommentLikeResponseDto>> findAllCommentLike(
@@ -59,7 +58,7 @@ public class CommentLikeController {
      * @param post_id
      * @param commentId
      * @param loginUserId
-     * @return String : 성공 여부
+     * @return String : 성공 여부 | 202 NO_CONTENT
      */
     @DeleteMapping
     public ResponseEntity<String> deleteCommentLike(
