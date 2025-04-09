@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -38,7 +35,7 @@ public class UserServiceImpl implements UserService {
 
         // User 엔티티 생성 및 저장
         User user = new User(dto.getEmail(), encodedPassword, dto.getUserName(),
-                parseBirth(dto.getBirth()), dto.getGender(), dto.getPhone());
+                    dto.getBirth(), dto.getGender(), dto.getPhone());
 
         return new UserResponseDto(userRepository.save(user));
     }
@@ -107,7 +104,7 @@ public class UserServiceImpl implements UserService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
-        user.updateUser(encodedPassword, dto.getUserName(), parseBirth(dto.getBirth()),
+        user.updateUser(encodedPassword, dto.getUserName(), dto.getBirth(),
                 dto.getPhone(), dto.getImageUrl(), dto.getHobby(), dto.getCityName());
 
         return new UserResponseDto(user);
@@ -154,13 +151,6 @@ public class UserServiceImpl implements UserService {
 
         // 인증 성공 시 사용자 반환
         return user;
-    }
-
-    /**
-     * yyyyMMdd 형식의 생년월일 문자열을 LocalDate로 변환
-     */
-    private LocalDate parseBirth(String birth) {
-        return LocalDate.parse(birth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
 }
