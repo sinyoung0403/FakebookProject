@@ -19,8 +19,7 @@ public class FriendController {
 
     @PostMapping("/requests")
     public ResponseEntity<FriendResponseDto> requestFriend(
-            HttpServletRequest request,
-            @RequestParam Long requestUserId,
+            @SessionAttribute ("loginUser") Long requestUserId,
             @RequestParam Long responseUserId
     ) {
         FriendResponseDto friendResponseDto = friendService.requestFriend(requestUserId, responseUserId);
@@ -29,12 +28,11 @@ public class FriendController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Page<FriendPageResponseDto>> findMyFriends(
-            HttpServletRequest request,
+            @SessionAttribute ("loginUser") Long loginUserId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        Page<FriendPageResponseDto> friendResponseDtoList = friendService.findMyFriends(userId, page, size);
+        Page<FriendPageResponseDto> friendResponseDtoList = friendService.findMyFriends(loginUserId, page, size);
         return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
     }
 

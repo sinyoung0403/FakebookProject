@@ -40,7 +40,7 @@ public class UserUpdateRequestDto {
     private final String hobby;
 
     // 지역
-    @Size(max = 6, message = "지역명은 6자 이내로 입력해주세요.")
+    @Size(max = 6, message = "지역명은 2자 이내로 입력해주세요.")
     @Pattern(
             regexp = "^(서울|인천|대전|대구|부산|광주|경기|강원|충청|전라|경상|제주)$",
             message = "유효한 지역명을 입력해주세요."

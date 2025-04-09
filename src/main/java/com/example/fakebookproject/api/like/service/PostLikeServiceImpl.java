@@ -30,8 +30,8 @@ public class PostLikeServiceImpl implements PostLikeService {
      *
      * @param postId
      * @param loginUserId
+     * @throws CustomException User 가 존재하지 않으면 예외 발생 (LIKE_FAILED)
      */
-    @Transactional
     @Override
     public void createPostLike(Long postId, Long loginUserId) {
         // 1. Like 추가 전 유효성 검사:
@@ -45,7 +45,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         postLikeRepository.validateNotExistenceByUserId(loginUserId);
 
         // 3. 본인 게시물인지 확인
-        if (findPost.getUser().getId() == loginUserId) {
+        if (findPost.getUser().getId().equals(loginUserId)) {
             throw new CustomException(ExceptionCode.LIKE_FAILED);
         }
 
@@ -79,6 +79,7 @@ public class PostLikeServiceImpl implements PostLikeService {
      * @param postId
      * @param loginUserId
      */
+    @Transactional
     @Override
     public void deletePostLike(Long postId, Long loginUserId) {
         // 1. Like 추가 전 유효성 검사:

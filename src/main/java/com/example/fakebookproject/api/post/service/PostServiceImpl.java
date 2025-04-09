@@ -28,14 +28,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final FriendRepository friendRepository;
 
     @Override
     public PostResponseDto findPostById(Long id) {
-        Post post = postRepository.findPostByIdOrElseThrow(id);
-        return null;
+        Post findPost = postRepository.findPostByIdOrElseThrow(id);
+        return new PostResponseDto(findPost);
     }
 
     @Override
@@ -116,7 +117,6 @@ public class PostServiceImpl implements PostService{
         }
 
         postRepository.delete(foundPost);
-
     }
 
 

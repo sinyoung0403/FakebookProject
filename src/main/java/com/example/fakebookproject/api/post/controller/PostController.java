@@ -23,17 +23,15 @@ public class PostController {
     private final PostService postService;
 
     /**
-     *
-     * @param loginId 현재 로그인 된 사용자 정보
+     * @param loginId    현재 로그인 된 사용자 정보
      * @param requestDto 등록할 게시글 정보
-     * @return 200OK
+     * @return 200 OK
      */
     @PostMapping
     public ResponseEntity<Void> createPost(
             @SessionAttribute("loginUser") Long loginId,
             @RequestBody @Valid PostCreateRequestDto requestDto
-    )
-    {
+    ) {
         postService.createPost(requestDto, loginId);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -44,7 +42,7 @@ public class PostController {
             @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ){
+    ) {
 
         PageResponse<PostResponseDto> responseDto = postService.findMyPost(loginId, page, size);
 
@@ -56,7 +54,7 @@ public class PostController {
             @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
-    ){
+    ) {
         PageResponse<PostResponseDto> responseDto = postService.findRelatedPost(loginId, page, size);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
@@ -65,9 +63,8 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDto> findPostById(
             @PathVariable Long id
-    ){
+    ) {
         PostResponseDto responseDto = postService.findPostById(id);
-
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -77,7 +74,7 @@ public class PostController {
             @SessionAttribute("loginUser") Long loginId,
             @RequestBody @Valid PostUpdateDto requestDto,
             @PathVariable Long id
-    ){
+    ) {
         postService.updatePost(id, loginId, requestDto);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -87,7 +84,7 @@ public class PostController {
     public ResponseEntity<Void> deletePost(
             @SessionAttribute("loginUser") Long loginId,
             @PathVariable Long id
-    ){
+    ) {
         postService.deletePost(id, loginId);
 
         return new ResponseEntity<>(HttpStatus.OK);

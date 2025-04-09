@@ -37,6 +37,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Transactional
     @Override
     public void createCommentLike(Long postId, Long commentId, Long loginUserId) {
+
         // 1. Like 추가 전 유효성 검사:
         // - User 가 존재하지 않으면 예외 발생
         // - Post 이 존재하지 않으면 예외 발생
@@ -50,7 +51,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         commentLikeRepository.validateNotExistenceByUserId(loginUserId);
 
         // 3. 본인 댓글인지 확인
-        if (findComment.getUser().getId() == loginUserId) {
+        if (findComment.getUser().getId().equals(loginUserId)) {
             throw new CustomException(ExceptionCode.LIKE_FAILED);
         }
 

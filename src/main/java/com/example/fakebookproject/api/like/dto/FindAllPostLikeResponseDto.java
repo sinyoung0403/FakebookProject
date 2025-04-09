@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class FindAllPostLikeResponseDto {
-    private String userName;
-    private String imageUrl;
+    private final String userName;
+    private final String imageUrl;
 
     /**
      * PostLike 를 ResponseDto 로 변환해주는 정적 메서드
      * @param postLike
-     * @return
+     * @returnd
      */
     public static FindAllPostLikeResponseDto from(PostLike postLike) {
         return new FindAllPostLikeResponseDto(postLike.getUser().getUserName(), postLike.getUser().getImageUrl());
