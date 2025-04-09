@@ -33,13 +33,16 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         postRepository.findPostByIdOrElseThrow(postId);
         Comment findComment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
-        // 2. Entity 변환
+        // 2. 로그인 유저 Like 검증
+        commentLikeRepository.validateNotExistenceByUserId(loginUserId);
+
+        // 3. Entity 변환
         CommentLike commentLike = new CommentLike(findUser, findComment);
 
-        // 3. Comment 좋아요 추가
+        // 4. Comment 좋아요 추가
         commentLikeRepository.save(commentLike);
 
-        // 4. Comment Table Like Count 추가
+        // 5. Comment Table Like Count 추가
         commentRepository.increaseLikeCount(commentId);
     }
 
@@ -53,14 +56,17 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Override
     public void deleteCommentLike(Long postId, Long commentId, Long loginUserId) {
         // 1. 데이터 검증 및 조회
-        userRepository.validateNotExistenceByUserId(loginUserId);
+        userRepository.validateExistenceByUserId(loginUserId);
 //        postRepository.validateExistenceByPost_Id(postId);
-        commentRepository.validateNotExistenceByCommentId(commentId);
+        commentRepository.validateExistenceByCommentId(commentId);
 
-        // 2. Entity 변환
+        // 2. 로그인 유저 Like 검증
+        commentLikeRepository.validateExistenceByUserId(loginUserId);
+
+        // 3. Entity 변환
         CommentLike commentLike = commentLikeRepository.findByComment_IdAndUser_IdOrElseThrow(postId, loginUserId);
 
-        // 3. 삭제
+        // 4. 삭제
         commentLikeRepository.delete(commentLike);
     }
 }
