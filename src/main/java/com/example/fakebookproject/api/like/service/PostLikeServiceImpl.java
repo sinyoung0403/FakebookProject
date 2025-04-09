@@ -44,10 +44,10 @@ public class PostLikeServiceImpl implements PostLikeService {
         // 3. Entity 생성
         PostLike postLike = new PostLike(findUser, findPost);
 
-        // 3. 좋아요 추가 , Post 에 있는 Like count 로 증가
+        // 4. postLikeRepository 추가
         postLikeRepository.save(postLike);
 
-        // 4. post count 에도 추가.
+        // 5. PostRepository 에서 like count Column +1
         postRepository.increaseLikeCount(postId);
     }
 
@@ -89,7 +89,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         // 4. postLikeRepository 삭제
         postLikeRepository.delete(postLike);
 
-        // 5. PostRepository 에서 like count Column -1 해주어야함.
+        // 5. PostRepository 에서 like count Column -1
         postRepository.decreaseLikeCount(postId);
     }
 }
