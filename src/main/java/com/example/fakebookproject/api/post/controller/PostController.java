@@ -4,6 +4,7 @@ import com.example.fakebookproject.api.post.dto.PostCreateRequestDto;
 import com.example.fakebookproject.api.post.dto.PostResponseDto;
 import com.example.fakebookproject.api.post.dto.PostUpdateDto;
 import com.example.fakebookproject.api.post.service.PostService;
+import com.example.fakebookproject.common.dto.PageResponse;
 import jakarta.persistence.PostUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -21,6 +22,12 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
 
+    /**
+     *
+     * @param loginId 현재 로그인 된 사용자 정보
+     * @param requestDto 등록할 게시글 정보
+     * @return 200OK
+     */
     @PostMapping
     public ResponseEntity<Void> createPost(
             @SessionAttribute("loginUser") Long loginId,
@@ -33,24 +40,24 @@ public class PostController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Page<PostResponseDto>> findMyPost(
+    public ResponseEntity<PageResponse<PostResponseDto>> findMyPost(
             @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
 
-        Page<PostResponseDto> responseDto = postService.findMyPost(loginId, page, size);
+        PageResponse<PostResponseDto> responseDto = postService.findMyPost(loginId, page, size);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<PostResponseDto>> findRelatedPost(
+    public ResponseEntity<PageResponse<PostResponseDto>> findRelatedPost(
             @SessionAttribute("loginUser") Long loginId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        Page<PostResponseDto> responseDto = postService.findRelatedPost(loginId, page, size);
+        PageResponse<PostResponseDto> responseDto = postService.findRelatedPost(loginId, page, size);
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
