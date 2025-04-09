@@ -5,6 +5,7 @@ import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController {
      * @return 생성된 사용자 정보
      */
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateRequestDto dto) {
+    public ResponseEntity<UserResponseDto> createUser(@RequestBody @Valid UserCreateRequestDto dto) {
         return new ResponseEntity<>(userService.createUser(dto), HttpStatus.CREATED);
     }
 
@@ -48,7 +49,7 @@ public class UserController {
      */
     @PostMapping("/mypage")
     public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId,
-                                                               @RequestBody PasswordRequestDto dto) {
+                                                               @RequestBody @Valid PasswordRequestDto dto) {
         return new ResponseEntity<>(userService.findUserByLoginUserId(loginUserId, dto), HttpStatus.OK);
     }
 
@@ -61,7 +62,7 @@ public class UserController {
      */
     @PatchMapping
     public ResponseEntity<UserResponseDto> updateUser(@SessionAttribute("loginUser") Long loginUserId,
-                                                      @RequestBody UserUpdateRequestDto dto) {
+                                                      @RequestBody @Valid UserUpdateRequestDto dto) {
         return new ResponseEntity<>(userService.updateUser(loginUserId, dto), HttpStatus.OK);
     }
 
@@ -75,7 +76,7 @@ public class UserController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(@SessionAttribute ("loginUser") Long loginUserId,
-                                           @RequestBody PasswordRequestDto dto) {
+                                           @RequestBody @Valid PasswordRequestDto dto) {
         userService.deleteUser(loginUserId, dto);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
@@ -88,7 +89,7 @@ public class UserController {
      * @return 로그인 성공 메시지
      */
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequestDto dto, HttpServletRequest httpRequest) {
+    public ResponseEntity<String> loginUser(@RequestBody @Valid LoginRequestDto dto, HttpServletRequest httpRequest) {
 
         User user = userService.loginUser(dto);
 
