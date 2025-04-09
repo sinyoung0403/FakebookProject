@@ -18,4 +18,18 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
     default CommentLike findByComment_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
         return findByComment_IdAndUser_Id(postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
     }
+
+    boolean existsByUser_Id(Long userId);
+
+    default void validateExistenceByUserId(Long userId) {
+        if (!existsByUser_Id(userId)) {
+            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
+        }
+    }
+
+    default void validateNotExistenceByUserId(Long userId) {
+        if (existsByUser_Id(userId)) {
+            throw new CustomException(ExceptionCode.USER_ALREADY_EXISTS);
+        }
+    }
 }
