@@ -93,7 +93,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         // - Post 이 존재하지 않으면 예외 발생
         // - Comment 가 존재하지 않으면 예외 발생
         userRepository.validateExistenceByUserId(loginUserId);
-//        postRepository.validateExistenceByPost_Id(postId);
+        postRepository.validateExistenceByPost_Id(postId);
         commentRepository.validateExistenceByCommentId(commentId);
 
         // 2. commentLikeRepository User 존재 여부 유효성 검사

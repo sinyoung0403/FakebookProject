@@ -85,7 +85,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         // - User 가 존재하지 않으면 예외 발생
         // - Post 이 존재하지 않으면 예외 발생
         userRepository.validateExistenceByUserId(loginUserId);
-//        postRepository.validateExistenceByPost_Id(postId);
+        postRepository.validateExistenceByPost_Id(postId);
 
         // 2. postLikeRepository User 존재 여부 유효성 검사
         // - 존재하지 않으면 예외 발생
