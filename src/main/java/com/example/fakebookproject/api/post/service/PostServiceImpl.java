@@ -3,6 +3,7 @@ package com.example.fakebookproject.api.post.service;
 import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.post.dto.PostCreateRequestDto;
 import com.example.fakebookproject.api.post.dto.PostResponseDto;
+import com.example.fakebookproject.api.post.dto.PostUpdateDto;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.entity.User;
@@ -11,6 +12,7 @@ import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,19 +38,9 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
+    public void createPost(PostCreateRequestDto requestDto, Long loginId) {
 
-        HttpSession session = request.getSession();
-
-        Object sessionId = session.getAttribute("loginUser");
-
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
-
-        User foundUser = userRepository.findUserByIdOrElseThrow(userId);
+        User foundUser = userRepository.findUserByIdOrElseThrow(loginId);
 
         Post post = new Post(
                 requestDto.getContents(),
@@ -61,41 +53,51 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
-
-        Object sessionId = session.getAttribute("loginUser");
-
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
+    public Page<PostResponseDto> findMyPost(Long loginId, int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(userId, pageable);
+        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(loginId, pageable);
 
         return postPage.map(PostResponseDto::new);
     }
 
     @Override
-    public Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
+    public Page<PostResponseDto> findRelatedPost(Long loginId, int page, int size) {
 
-        Object sessionId = session.getAttribute("user");
+        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAccepted(loginId);
 
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
-
-        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
+        friendIds.add(loginId);
 
         Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
 
         return posts.map(PostResponseDto::new);
+
+    }
+
+    @Transactional
+    @Override
+    public void updatePost(Long id, Long loginId, PostUpdateDto requestDto) {
+
+        Post foundPost = postRepository.findPostByIdOrElseThrow(id);
+
+        if(!foundPost.getUser().getId().equals(loginId)) {
+            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
+        }
+
+        foundPost.updatePost(requestDto.getContents(), requestDto.getImageUrl());
+    }
+
+    @Override
+    public void deletePost(Long id, Long loginId) {
+
+        Post foundPost = postRepository.findPostByIdOrElseThrow(id);
+
+        if(!foundPost.getUser().getId().equals(loginId)) {
+            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
+        }
+
+        postRepository.delete(foundPost);
 
     }
 
