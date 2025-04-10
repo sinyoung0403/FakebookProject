@@ -94,8 +94,10 @@ public class UserController {
      */
     @DeleteMapping
     public ResponseEntity<Void> deleteUser(@SessionAttribute ("loginUser") Long loginUserId,
-                                           @RequestBody @Valid PasswordRequestDto dto) {
+                                           @RequestBody @Valid PasswordRequestDto dto,
+                                           HttpSession session) {
         userService.deleteUser(loginUserId, dto);
+        session.invalidate();
         return ResponseEntity.noContent().build();
     }
 
