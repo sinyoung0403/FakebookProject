@@ -1,6 +1,8 @@
 package com.example.fakebookproject.api.friend.repository;
 
 import com.example.fakebookproject.api.friend.entity.FriendStatus;
+import com.example.fakebookproject.common.exception.CustomException;
+import com.example.fakebookproject.common.exception.ExceptionCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +19,20 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
      * @param responseUserId
      * @return
      */
-    FriendStatus findFriendStatusByRequestUserIdAndResponseUserId(Long requestUserId, Long responseUserId);
+    Optional<FriendStatus> findFriendStatusByRequestUserIdAndResponseUserId(Long requestUserId, Long responseUserId);
+
+
+    /**
+     * 친구 요청 테이블 null 예외처리
+     * @param requestUserId
+     * @param responseUserId
+     * @return
+     */
+    default FriendStatus findByRequestUserIdAndResponseUserIdOrElseThrow(Long requestUserId, Long responseUserId) {
+        return findFriendStatusByRequestUserIdAndResponseUserId(requestUserId, responseUserId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.FRIEND_REQUEST_NOT_FOUND));
+    }
+
 
     /**
      * 중복 요청 확인
