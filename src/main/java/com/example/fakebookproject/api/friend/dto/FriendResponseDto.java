@@ -9,6 +9,11 @@ import lombok.Getter;
 public class FriendResponseDto {
 
     /**
+     * 친구 id(pk)
+     */
+    private Long id;
+
+    /**
      * 친구 이름
      */
     private String userName;
@@ -18,7 +23,8 @@ public class FriendResponseDto {
      */
     private String imageUrl;
 
-    public FriendResponseDto(String userName, String imageUrl) {
+    public FriendResponseDto(Long id, String userName, String imageUrl) {
+        this.id = id;
         this.userName = userName;
         this.imageUrl = imageUrl;
     }

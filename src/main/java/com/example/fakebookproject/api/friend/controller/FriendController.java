@@ -103,31 +103,30 @@ public class FriendController {
     /**
      * 친구 요청 수락
      * @param loginUserId
-     * @param id
-     * @param status
+     * @param requestUserId
      * @return
      */
-    @PatchMapping("/responses/{id}")
+    @PatchMapping("/responses/{requestUserId}")
     public ResponseEntity<Void> responseFriend(
             @SessionAttribute ("loginUser") Long loginUserId,
-            @PathVariable Long id,
-            @RequestParam int status) {
-        friendService.responseFriend(loginUserId, id, status);
+            @PathVariable Long requestUserId
+    ) {
+        friendService.responseFriend(loginUserId, requestUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**
      * 친구 요청 거절
      * @param loginUserId
-     * @param id
+     * @param requestUserId
      * @return
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{requestUserId}")
     public ResponseEntity<Void> deleteFriend(
             @SessionAttribute ("loginUser") Long loginUserId,
-            @PathVariable Long id
+            @PathVariable Long requestUserId
     ) {
-        friendService.deleteFriend(loginUserId, id);
+        friendService.deleteFriend(loginUserId, requestUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

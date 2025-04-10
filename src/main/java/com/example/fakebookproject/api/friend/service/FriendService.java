@@ -10,15 +10,15 @@ public interface FriendService {
 
     FriendStatusResponseDto requestFriend(Long requestUserId, Long responseUserId);
 
-    PageResponse<FriendResponseDto> findMyFriends(Long userId, int page, int size);
+    PageResponse<FriendResponseDto> findMyFriends(Long loginUserId, int page, int size);
 
-    PageResponse<FriendResponseDto> recommendFriends(Long userId, int page, int size);
+    PageResponse<FriendResponseDto> recommendFriends(Long loginUserId, int page, int size);
 
-    PageResponse<FriendResponseDto> receivedFriends(Long userId, int page, int size);
+    PageResponse<FriendResponseDto> receivedFriends(Long loginUserId, int page, int size);
 
-    PageResponse<FriendResponseDto> sentFriends(Long userId, int page, int size);
+    PageResponse<FriendResponseDto> sentFriends(Long loginUserId, int page, int size);
 
-    void responseFriend(Long userId, Long id, int status);
+    void responseFriend(Long loginUserId, Long requestUserId);
 
-    void deleteFriend(Long userId, Long id);
+    void deleteFriend(Long loginUserId, Long requestUserId);
 }
