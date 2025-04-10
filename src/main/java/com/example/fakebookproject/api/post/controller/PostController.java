@@ -53,7 +53,7 @@ public class PostController {
     @GetMapping("/me")
     public ResponseEntity<PageResponse<PostResponseDto>> findMyPost(
             @SessionAttribute("loginUser") Long loginId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
 
     ) {
         PageResponse<PostResponseDto> responseDto = postService.findMyPost(loginId, pageable);
@@ -71,7 +71,7 @@ public class PostController {
     @GetMapping
     public ResponseEntity<PageResponse<PostResponseDto>> findRelatedPost(
             @SessionAttribute("loginUser") Long loginId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
     ) {
         PageResponse<PostResponseDto> responseDto = postService.findRelatedPost(loginId, pageable);
 
@@ -87,7 +87,7 @@ public class PostController {
     @GetMapping("/user/{id}")
     public ResponseEntity<PageResponse<PostResponseDto>> findPostByUserId(
             @PathVariable Long id,
-            @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+            @PageableDefault(size = 10, sort = "updatedAt", direction = DESC) Pageable pageable
     ) {
         PageResponse<PostResponseDto> responseDto = postService.findPostByUserId(id, pageable);
 
