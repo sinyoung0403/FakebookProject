@@ -49,7 +49,7 @@ public class PostLikeController {
      * Post 에 추가된 Like 삭제
      *
      * @param postId
-     * @return String : 성공 여부 | 202 NO_CONTENT
+     * @return String : 성공 여부 | 204 NO_CONTENT
      */
     @DeleteMapping
     public ResponseEntity<String> deleteLike(
