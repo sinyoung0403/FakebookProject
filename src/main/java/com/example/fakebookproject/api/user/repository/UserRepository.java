@@ -21,8 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByIdAndIsDeletedFalse(Long userId);
 
-    boolean existsAllByEmail(String email);
-
     Optional<User> findUserById(Long userId);
 
     Optional<User> findUserByEmail(String email);
@@ -33,14 +31,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
         }
     }
 
-    default void validateNotExistenceByUserId(Long userId) {
-        if (existsById(userId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
-        }
-    }
-
     default void validateNotExistenceByUserEmail(String email) {
-        if (existsAllByEmail(email)) {
+        if (existsByEmail(email)) {
             throw new CustomException(ExceptionCode.DUPLICATE_EMAIL);
         }
     }
