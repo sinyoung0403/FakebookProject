@@ -127,7 +127,7 @@ public class FriendController {
             @PathVariable Long requestUserId
     ) {
         friendService.deleteFriend(loginUserId, requestUserId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
