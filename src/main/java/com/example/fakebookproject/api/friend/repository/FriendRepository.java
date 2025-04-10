@@ -68,18 +68,23 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
 
     /**
      * 추천 친구 목록
-     * @param userId
      * @param cityName
+     * @param hobby
      * @return
      */
     @Query("""
-                    SELECT u.id FROM FriendStatus f
-                    JOIN User u ON (
-                        (f.requestUser.id = :userId AND u.id = f.responseUser.id)
-                        OR
-                        (f.responseUser.id = :userId AND u.id = f.requestUser.id)
+                    SELECT u.id
+                    FROM User u
+                    WHERE u.id <> :userId
+                    AND (u.cityName = :cityName OR u.hobby = :hobby)
+                    AND u.id NOT IN (
+                        SELECT CASE
+                                 WHEN f.requestUser.id = :userId THEN f.responseUser.id
+                                 WHEN f.responseUser.id = :userId THEN f.requestUser.id
+                               END
+                        FROM FriendStatus f
+                        WHERE f.requestUser.id = :userId OR f.responseUser.id = :userId
                     )
-                    WHERE f.status = 0 AND (u.cityName = :cityName OR u.hobby = :hobby)
 
             """)
     List<Long> findRecommendationAllByUserIdOrElseThrow(@Param("userId") Long userId, @Param("cityName") String cityName, @Param("hobby") String hobby);
