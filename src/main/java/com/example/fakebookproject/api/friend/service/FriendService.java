@@ -16,7 +16,7 @@ public interface FriendService {
 
     PageResponse<FriendResponseDto> sentFriends(Long loginUserId, int page, int size);
 
-    void responseFriend(Long loginUserId, Long requestUserId);
+    FriendStatusResponseDto responseFriend(Long loginUserId, Long requestUserId);
 
     void deleteFriend(Long loginUserId, Long requestUserId);
 }

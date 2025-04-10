@@ -107,12 +107,12 @@ public class FriendController {
      * @return
      */
     @PatchMapping("/responses/{requestUserId}")
-    public ResponseEntity<Void> responseFriend(
+    public ResponseEntity<FriendStatusResponseDto> responseFriend(
             @SessionAttribute ("loginUser") Long loginUserId,
             @PathVariable Long requestUserId
     ) {
-        friendService.responseFriend(loginUserId, requestUserId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        FriendStatusResponseDto friendResponseDto = friendService.responseFriend(loginUserId, requestUserId);
+        return new ResponseEntity<>(friendResponseDto, HttpStatus.OK);
     }
 
     /**
