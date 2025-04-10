@@ -62,7 +62,6 @@ public class DataInitializer implements CommandLineRunner {
         // 댓글 생성 (자기 글이 아닌 게시글에 다른 유저들이 댓글 작성)
         for (Post post : posts) {
             for (User user : users) {
-                // 게시글 작성자가 아닌 경우에만 댓글 작성
                 Comment comment = new Comment(user, post, user.getUserName() + "의 댓글 on " + post.getContents());
                 commentRepository.save(comment);
             }
