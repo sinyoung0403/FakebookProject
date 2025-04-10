@@ -38,7 +38,7 @@ public class DataInitializer implements CommandLineRunner {
         for (int i = 1; i <= 5; i++) {
             String name = "test" + i;
             String email = "test" + i + "@test.com";
-            String rawPassword = "pwd";
+            String rawPassword = "pwdpwdpwd1234!";
             LocalDate birth = LocalDate.parse("1999-05-04"); // 수정: yyyy-MM-dd 형식
             String gender = "M";
             String phone = "010-0000-0000";
