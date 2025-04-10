@@ -2,6 +2,8 @@ package com.example.fakebookproject.common.config;
 
 import com.example.fakebookproject.api.comment.entity.Comment;
 import com.example.fakebookproject.api.comment.repository.CommentRepository;
+import com.example.fakebookproject.api.friend.entity.FriendStatus;
+import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.entity.User;
@@ -24,6 +26,7 @@ public class DataInitializer implements CommandLineRunner {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FriendRepository friendRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -66,6 +69,17 @@ public class DataInitializer implements CommandLineRunner {
                 commentRepository.save(comment);
             }
         }
+
+        FriendStatus f1 = new FriendStatus(1, users.get(0), users.get(1)); // test1 → test2 (친구)
+        FriendStatus f2 = new FriendStatus(1, users.get(2), users.get(0)); // test3 → test1 (친구)
+        FriendStatus f3 = new FriendStatus(0, users.get(1), users.get(3)); // test2 → test4 (요청 중)
+        FriendStatus f4 = new FriendStatus(0, users.get(4), users.get(2)); // test5 → test3 (요청 중)
+
+        friendRepository.save(f1);
+        friendRepository.save(f2);
+        friendRepository.save(f3);
+        friendRepository.save(f4);
+
 
         log.info("초기 데이터 생성완료");
     }
