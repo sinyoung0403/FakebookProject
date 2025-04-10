@@ -97,7 +97,7 @@ public class FriendServiceImpl implements FriendService {
         User findUser = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        List<Long> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(loginUserId, findUser.getCityName(), findUser.getHobby());
+        List<Long> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(findUser.getId(), findUser.getCityName(), findUser.getHobby());
 
         Page<User> recommendationPage = userRepository.findByIdIn(recommendationList, PageRequest.of(page,size));
 
