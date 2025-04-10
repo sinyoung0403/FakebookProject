@@ -3,6 +3,8 @@ package com.example.fakebookproject.api.user.controller;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.service.UserService;
+import com.example.fakebookproject.common.exception.CustomException;
+import com.example.fakebookproject.common.exception.ExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -48,7 +50,7 @@ public class UserController {
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
      * @return 로그인한 사용자 정보
      */
-    @PostMapping("/mypage")
+    @GetMapping("/mypage")
     public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId) {
         UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
@@ -130,10 +132,11 @@ public class UserController {
         // 세션이 존재하면 반환하고, 없으면 null 반환
         HttpSession session = httpRequest.getSession(false);
 
-        if (session != null) {
-            session.invalidate(); // 세션 무효화
+        if (session == null) {
+            throw new CustomException(ExceptionCode.NOT_LOGGEDIN);
         }
 
+        session.invalidate(); // 세션 무효화
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃");
     }
 
