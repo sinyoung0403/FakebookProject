@@ -24,6 +24,7 @@ public enum ExceptionCode {
     NOT_FOUND_COMMENT(HttpStatus.NOT_FOUND, "NOT_FOUND_COMMENT", "댓글이 존재하지 않습니다."),
     UPDATE_FAILED(HttpStatus.NOT_FOUND, "UPDATE_FAILED", "데이터 변경에 실패했습니다."),
     DELETE_FAILED(HttpStatus.NOT_FOUND, "DELETE_FAILED", "데이터 삭제에 실패했습니다."),
+    SAME_AS_OLD_PASSWORD(HttpStatus.BAD_REQUEST, "SAME_AS_OLD_PASSWORD", "기존 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다."),
     NO_CHANGES(HttpStatus.NO_CONTENT, "NO_CHANGES", "변경된 내용이 없습니다."),
     LIKE_FAILED(HttpStatus.BAD_REQUEST, "LIKE_FAILED", "본인에게 좋아요를 추가할 수 없습니다."),
