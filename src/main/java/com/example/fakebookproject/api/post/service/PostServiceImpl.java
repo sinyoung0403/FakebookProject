@@ -43,12 +43,13 @@ public class PostServiceImpl implements PostService{
     /**
      * 게시글 생성
      *
-     * @param requestDto    게시글 정보
-     * @param loginId       사용자 식별자
-     * @throws CustomException 사용자 식별자가 존재하지 않을 경우 예외 발생
+     * @param requestDto        게시글 정보
+     * @param loginId           사용자 식별자
+     * @return                  저장된 정보
+     * @throws CustomException  사용자 식별자가 존재하지 않을 경우 예외 발생
      */
     @Override
-    public void createPost(PostCreateRequestDto requestDto, Long loginId) {
+    public PostResponseDto createPost(PostCreateRequestDto requestDto, Long loginId) {
 
         User foundUser = userRepository.findUserByIdOrElseThrow(loginId);
 
@@ -60,6 +61,7 @@ public class PostServiceImpl implements PostService{
 
         Post savedPost = postRepository.save(post);
 
+        return new PostResponseDto(savedPost);
     }
 
     /**
@@ -126,7 +128,7 @@ public class PostServiceImpl implements PostService{
      */
     @Transactional
     @Override
-    public void updatePost(Long id, Long loginId, PostUpdateDto requestDto) {
+    public PostResponseDto updatePost(Long id, Long loginId, PostUpdateDto requestDto) {
 
         Post foundPost = postRepository.findPostByIdOrElseThrow(id);
 
@@ -134,7 +136,13 @@ public class PostServiceImpl implements PostService{
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
+        if(requestDto.getContents() == null && requestDto.getImageUrl() == null){
+            throw new CustomException(ExceptionCode.NO_CHANGES);
+        }
+
         foundPost.updatePost(requestDto.getContents(), requestDto.getImageUrl());
+
+        return new PostResponseDto(foundPost);
     }
 
     /**

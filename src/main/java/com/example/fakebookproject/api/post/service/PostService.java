@@ -14,13 +14,13 @@ public interface PostService {
 
     PostResponseDto findPostById(Long id);
 
-    void createPost(PostCreateRequestDto postCreateRequestDto, Long loginId);
+    PostResponseDto createPost(PostCreateRequestDto postCreateRequestDto, Long loginId);
 
     PageResponse<PostResponseDto> findMyPost(Long loginId, Pageable pageable);
 
     PageResponse<PostResponseDto> findRelatedPost(Long loginId, Pageable pageable);
 
-    void updatePost(Long id, Long loginId, PostUpdateDto postUpdateDto);
+    PostResponseDto updatePost(Long id, Long loginId, PostUpdateDto postUpdateDto);
 
     void deletePost(Long id, Long loginId);
 
