@@ -34,13 +34,13 @@ public class PostController {
      * @return              성공 시 CREATED
      */
     @PostMapping
-    public ResponseEntity<Void> createPost(
+    public ResponseEntity<PostResponseDto> createPost(
             @SessionAttribute("loginUser") Long loginId,
             @RequestBody @Valid PostCreateRequestDto requestDto
     ) {
-        postService.createPost(requestDto, loginId);
+        PostResponseDto responseDto = postService.createPost(requestDto, loginId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     /**
@@ -119,14 +119,14 @@ public class PostController {
      * @return              성공시 200 OK
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updatePost(
+    public ResponseEntity<PostResponseDto> updatePost(
             @SessionAttribute("loginUser") Long loginId,
             @RequestBody @Valid PostUpdateDto requestDto,
             @PathVariable Long id
     ) {
-        postService.updatePost(id, loginId, requestDto);
+        PostResponseDto responseDto = postService.updatePost(id, loginId, requestDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(responseDto);
     }
 
     /**
