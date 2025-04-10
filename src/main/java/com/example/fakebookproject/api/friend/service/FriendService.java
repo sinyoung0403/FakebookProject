@@ -3,8 +3,6 @@ package com.example.fakebookproject.api.friend.service;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.common.dto.PageResponse;
-import org.springframework.data.domain.Page;
-
 
 public interface FriendService {
 
