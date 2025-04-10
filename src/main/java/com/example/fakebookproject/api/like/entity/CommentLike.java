@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.mapping.ToOne;
 
 @Getter
 @Entity
@@ -28,6 +27,11 @@ public class CommentLike {
   @JoinColumn(name = "comment_id")
   @OnDelete(action = OnDeleteAction.CASCADE)
   private Comment comment;
+
+  public CommentLike(User user, Comment comment) {
+    this.user = user;
+    this.comment = comment;
+  }
 
   public void setUsers(User user) {
     this.user = user;

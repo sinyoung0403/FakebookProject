@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -25,20 +22,20 @@ public class UserServiceImpl implements UserService {
      *
      * @param dto 회원가입 요청 데이터 (이메일, 비밀번호, 이름 등)
      * @return 생성된 사용자 정보
-     * @throws CustomException 이미 존재하는 이메일인 경우 예외 발생
+     * @throws CustomException 이미 존재하는 이메일인 경우 예외 발생 (DUPLICATE_EMAIL)
      */
     @Override
     public UserResponseDto createUser(UserCreateRequestDto dto) {
 
         // 이메일 존재 여부 확인
-        userRepository.validateExistenceByUserEmail(dto.getEmail());
+        userRepository.validateNotExistenceByUserEmail(dto.getEmail());
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
         // User 엔티티 생성 및 저장
         User user = new User(dto.getEmail(), encodedPassword, dto.getUserName(),
-                parseBirth(dto.getBirth()), dto.getGender(), dto.getPhone());
+                    dto.getBirth(), dto.getGender(), dto.getPhone());
 
         return new UserResponseDto(userRepository.save(user));
     }
@@ -49,7 +46,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param userId 조회 대상 사용자 ID
      * @return 조회된 사용자 정보
-     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      */
     @Override
     public UserResponseDto findUserById(Long userId) {
@@ -66,8 +63,8 @@ public class UserServiceImpl implements UserService {
      * @param loginUserId loginUser 세션에 저장된 로그인 사용자 ID
      * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
      * @return 로그인한 사용자 정보
-     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
-     * @throws CustomException 비밀번호 불일치 시 예외 발생
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      */
     @Override
     public UserResponseDto findUserByLoginUserId(Long loginUserId, PasswordRequestDto dto) {
@@ -89,8 +86,8 @@ public class UserServiceImpl implements UserService {
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
      * @param dto 사용자 수정 요청 데이터 (비밀번호 포함)
      * @return 수정된 사용자 정보
-     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생
-     * @throws CustomException 비밀번호 불일치 시 예외 발생
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      */
     @Transactional
     @Override
@@ -107,7 +104,7 @@ public class UserServiceImpl implements UserService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(dto.getPassword());
 
-        user.updateUser(encodedPassword, dto.getUserName(), parseBirth(dto.getBirth()),
+        user.updateUser(encodedPassword, dto.getUserName(), dto.getBirth(),
                 dto.getPhone(), dto.getImageUrl(), dto.getHobby(), dto.getCityName());
 
         return new UserResponseDto(user);
@@ -119,6 +116,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
      * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      */
     @Override
     public void deleteUser(Long loginUserId, PasswordRequestDto dto) {
@@ -139,7 +138,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param dto 로그인 요청 정보 (이메일, 비밀번호)
      * @return 인증된 사용자 객체
-     * @throws CustomException 로그인 실패 시 예외 발생 (이메일 미존재 또는 비밀번호 불일치)
+     * @throws CustomException 이메일 미존재 또는 비밀번호 불일치 시 예외 발생 (LOGIN_FAILED)
      */
     @Override
     public User loginUser(LoginRequestDto dto) {
@@ -154,13 +153,6 @@ public class UserServiceImpl implements UserService {
 
         // 인증 성공 시 사용자 반환
         return user;
-    }
-
-    /**
-     * yyyyMMdd 형식의 생년월일 문자열을 LocalDate로 변환
-     */
-    private LocalDate parseBirth(String birth) {
-        return LocalDate.parse(birth, DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
 
 }

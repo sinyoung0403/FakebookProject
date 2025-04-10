@@ -7,6 +7,7 @@ import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.dto.PageResponse;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +51,18 @@ public class CommentServiceImpl implements CommentService {
      * @return 조회된 댓글 목록 (페이징 처리 포함)
      */
     @Override
-    public Page<CommentResponseDto> findAllComments(Long postId, Pageable pageable) {
+    public PageResponse<CommentResponseDto> findAllComments(Long postId, Pageable pageable) {
         Post post = postRepository.findPostByIdOrElseThrow(postId);
         Page<Comment> comments = commentRepository.findByPost(post, pageable);
+        Page<CommentResponseDto> pageDto = comments.map(CommentResponseDto::new);
 
-        return comments.map(CommentResponseDto::new);
+        return new PageResponse<>(
+                pageDto.getContent(),
+                pageDto.getNumber(),
+                pageDto.getSize(),
+                pageDto.getTotalElements(),
+                pageDto.getTotalPages()
+        );
     }
 
     /**
@@ -64,13 +72,15 @@ public class CommentServiceImpl implements CommentService {
      * @param commentId 수정할 댓글 식별자
      * @param content 수정할 댓글 내용
      * @return 성공 시 수정된 댓글 내용
+     *         - 수정할 댓글이 있는 게시글이 존재하지 않을 경우 NOT_FOUND_POST 응답
      *         - 수정할 댓글이 존재하지 않을 경우 NOT_FOUND_COMMENT 응답
      *         - 댓글 작성자와 현재 로그인된 사용자가 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
      *         - 변경할 내용이 없을 경우 NO_CHANGES 응답
      */
     @Override
     @Transactional
-    public CommentResponseDto updateComment(Long userId, Long commentId, String content) {
+    public CommentResponseDto updateComment(Long userId, Long postId, Long commentId, String content) {
+        postRepository.validateExistenceByPost_Id(postId);
         Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {
@@ -89,6 +99,7 @@ public class CommentServiceImpl implements CommentService {
     /**
      * 댓글 삭제
      * - 성공 시 204 No Content 응답
+     * - 삭제할 댓글이 있는 게시글이 존재하지 않을 경우 NOT_FOUND_POST 응답
      * - 삭제할 댓글이 존재하지 않을 경우 NOT_FOUND_COMMENT 응답
      * - 댓글 작성자와 현재 로그인된 사용자가 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
      *
@@ -97,7 +108,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     @Transactional
-    public void deleteComment(Long userId, Long commentId) {
+    public void deleteComment(Long userId, Long postId, Long commentId) {
+        postRepository.validateExistenceByPost_Id(postId);
         Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         if (!comment.getUser().getId().equals(userId)) {

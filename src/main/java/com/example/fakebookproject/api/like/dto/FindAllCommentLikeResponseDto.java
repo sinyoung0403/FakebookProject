@@ -1,21 +1,19 @@
 package com.example.fakebookproject.api.like.dto;
 
-import com.example.fakebookproject.api.like.entity.PostLike;
+import com.example.fakebookproject.api.like.entity.CommentLike;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class FindAllCommentLikeResponseDto {
-    private String userName;
-    private String imageUrl;
+    private final Long userId;
+    private final String userName;
+    private final String imageUrl;
 
-    /**
-     * Comment Like 를 ResponseDto 로 변환해주는 정적 메서드
-     * @param postLike
-     * @return
-     */
-    public static FindAllCommentLikeResponseDto from(PostLike postLike) {
-        return new FindAllCommentLikeResponseDto(postLike.getUser().getImageUrl(), postLike.getUser().getUserName());
+    public FindAllCommentLikeResponseDto(CommentLike commentLike) {
+        this.userId = commentLike.getUser().getId();
+        this.userName = commentLike.getUser().getUserName();
+        this.imageUrl = commentLike.getUser().getImageUrl();
     }
 }

@@ -3,52 +3,54 @@ package com.example.fakebookproject.api.post.service;
 import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.post.dto.PostCreateRequestDto;
 import com.example.fakebookproject.api.post.dto.PostResponseDto;
+import com.example.fakebookproject.api.post.dto.PostUpdateDto;
 import com.example.fakebookproject.api.post.entity.Post;
 import com.example.fakebookproject.api.post.repository.PostRepository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import com.example.fakebookproject.common.dto.PageResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
+
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final FriendRepository friendRepository;
 
+    /**
+     * 게시글 식별자로 게시글 찾기
+     *
+     * @param id    게시글 식별자
+     * @return      해당 게시글
+     */
     @Override
     public PostResponseDto findPostById(Long id) {
-        Post post = postRepository.findPostByIdOrElseThrow(id);
-        return null;
+        Post findPost = postRepository.findPostByIdOrElseThrow(id);
+        return new PostResponseDto(findPost);
     }
 
+    /**
+     * 게시글 생성
+     *
+     * @param requestDto    게시글 정보
+     * @param loginId       사용자 식별자
+     * @throws CustomException 사용자 식별자가 존재하지 않을 경우 예외 발생
+     */
     @Override
-    public void createPost(PostCreateRequestDto requestDto, HttpServletRequest request) {
+    public void createPost(PostCreateRequestDto requestDto, Long loginId) {
 
-        HttpSession session = request.getSession();
-
-        Object sessionId = session.getAttribute("loginUser");
-
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
-
-        User foundUser = userRepository.findUserByIdOrElseThrow(userId);
+        User foundUser = userRepository.findUserByIdOrElseThrow(loginId);
 
         Post post = new Post(
                 requestDto.getContents(),
@@ -60,43 +62,97 @@ public class PostServiceImpl implements PostService{
 
     }
 
+    /**
+     * 내 게시글 찾기
+     *
+     * @param loginId       사용자 식별자
+     * @param pageable      페이징 정보
+     * @return              내 게시글에 대한 정보
+     * @throws CustomException 사용자 식별자가 존재하지 않을 경우 예외 발생
+     */
     @Override
-    public Page<PostResponseDto> findMyPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
+    public PageResponse<PostResponseDto> findMyPost(Long loginId, Pageable pageable) {
 
-        Object sessionId = session.getAttribute("loginUser");
+        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(loginId, pageable);
 
-        Long userId = null;
+        Page<PostResponseDto> dtoPage = postPage.map(PostResponseDto::new);
 
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
-        }
+        return new PageResponse<>(
+                dtoPage.getContent(),
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages()
+        );    }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    /**
+     * 나와 친구의 게시글 찾기
+     *
+     * @param loginId           사용자 식별자
+     * @param pageable          페이징 정보
+     * @return                  나와 친구들 게시글에 대한 정보
+     * @throws CustomException  게시글이 존재하지 않을 경우 예외 발생
+     */
+    @Override
+    public PageResponse<PostResponseDto> findRelatedPost(Long loginId, Pageable pageable) {
 
-        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(userId, pageable);
+        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAccepted(loginId);
 
-        return postPage.map(PostResponseDto::new);
+        friendIds.add(loginId);
+
+        Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, pageable);
+
+        Page<PostResponseDto> dtoPage = posts.map(PostResponseDto::new);
+
+
+        return new PageResponse<>(
+                dtoPage.getContent(),
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages()
+        );
+
     }
 
+    /**
+     * 게시글 수정
+     *
+     * @param id                게시글 식별자
+     * @param loginId           사용자 식별자
+     * @param requestDto        수정하려는 게시글 정보
+     * @throws CustomException  게시글이 존재하지 않을 경우 예외 발생
+     */
+    @Transactional
     @Override
-    public Page<PostResponseDto> findRelatedPost(HttpServletRequest request, int page, int size) {
-        HttpSession session = request.getSession();
+    public void updatePost(Long id, Long loginId, PostUpdateDto requestDto) {
 
-        Object sessionId = session.getAttribute("user");
+        Post foundPost = postRepository.findPostByIdOrElseThrow(id);
 
-        Long userId = null;
-
-        if(sessionId instanceof Long){
-            userId = (Long) sessionId;
+        if(!foundPost.getUser().getId().equals(loginId)) {
+            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
-        List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(userId);
+        foundPost.updatePost(requestDto.getContents(), requestDto.getImageUrl());
+    }
 
-        Page<Post> posts = postRepository.findPostByUserIdInOrElseThrow(friendIds, PageRequest.of(page,size));
+    /**
+     * 게시글 삭제
+     *
+     * @param id                게시글 식별자
+     * @param loginId           사용자 식별자
+     * @throws CustomException  게시글이 존재하지 않을 경우 예외 발생
+     */
+    @Override
+    public void deletePost(Long id, Long loginId) {
 
-        return posts.map(PostResponseDto::new);
+        Post foundPost = postRepository.findPostByIdOrElseThrow(id);
 
+        if(!foundPost.getUser().getId().equals(loginId)) {
+            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
+        }
+
+        postRepository.delete(foundPost);
     }
 
 

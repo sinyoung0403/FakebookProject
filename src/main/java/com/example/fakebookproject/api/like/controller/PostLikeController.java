@@ -20,13 +20,14 @@ public class PostLikeController {
      * Post 에 Like 추가
      *
      * @param postId
-     * @return
+     * @return String : 성공 여부 | 201 CREATED
      */
     @PostMapping
     public ResponseEntity<String> createPostLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+            @PathVariable Long postId,
+            @SessionAttribute("loginUser") Long loginUserId
     ) {
+        postLikeService.createPostLike(postId, loginUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
     }
 
@@ -34,7 +35,7 @@ public class PostLikeController {
      * Post 에 추가된 Like 모두 조회
      *
      * @param postId
-     * @return
+     * @return 좋아요를 누른 사용자 (사용자 이름, 이미지 URL) List | 200 OK
      */
     @GetMapping
     public ResponseEntity<List<FindAllPostLikeResponseDto>> findAllPostLike(
@@ -48,14 +49,14 @@ public class PostLikeController {
      * Post 에 추가된 Like 삭제
      *
      * @param postId
-     * @return
+     * @return String : 성공 여부 | 202 NO_CONTENT
      */
     @DeleteMapping
     public ResponseEntity<String> deleteLike(
-            @PathVariable Long postId
-            //, @SessionAttribute(name = "loginUser") LoginDto loginDto
+            @PathVariable Long postId,
+            @SessionAttribute("loginUser") Long loginUserId
     ) {
-        postLikeService.deletePostLike(postId);
-        return ResponseEntity.ok("좋아요가 취소되었습니다.");
+        postLikeService.deletePostLike(postId, loginUserId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("좋아요가 취소되었습니다.");
     }
 }

@@ -19,6 +19,8 @@ import java.time.LocalDate;
 @SQLRestriction("is_deleted = false")
 public class User extends BaseTimeEntity {
 
+    private static final String DEFAULT_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
+
     // PK
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +53,7 @@ public class User extends BaseTimeEntity {
 
     // 이미지 주소
     @Column(name = "image_url", columnDefinition = "LONGTEXT")
-    private String imageUrl;
+    private String imageUrl = DEFAULT_IMAGE_URL;
 
     // 취미
     @Column(length = 50)
@@ -92,10 +94,5 @@ public class User extends BaseTimeEntity {
         if (hobby != null) this.hobby = hobby;
         if (cityName != null) this.cityName = cityName;
     }
-    // public User (파라미터) {
-    // super();
-    // this~~~~~~ = ~~~~
-    //
-    //
 
 }
