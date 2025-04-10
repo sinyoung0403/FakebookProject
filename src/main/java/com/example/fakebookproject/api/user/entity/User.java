@@ -15,8 +15,6 @@ import java.time.LocalDate;
 // 엔티티 삭제 시 실제로는 삭제하지 않고 is_deleted를 true로 업데이트
 @SQLDelete(sql = "update users set is_deleted = true where id = ?")
 
-// 모든 조회 쿼리에 is_deleted = false 조건을 자동으로 추가 (삭제된 데이터는 조회되지 않음)
-@SQLRestriction("is_deleted = false")
 public class User extends BaseTimeEntity {
 
     private static final String DEFAULT_IMAGE_URL = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
