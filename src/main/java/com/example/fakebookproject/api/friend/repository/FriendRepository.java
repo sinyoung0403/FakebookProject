@@ -1,26 +1,39 @@
 package com.example.fakebookproject.api.friend.repository;
 
 import com.example.fakebookproject.api.friend.entity.FriendStatus;
-import com.example.fakebookproject.common.exception.CustomException;
-import com.example.fakebookproject.common.exception.ExceptionCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
 
-    Page<FriendStatus> findById(Long userId, Pageable pageable);
+    /**
+     * 친구 요청 수락 위한 조회
+     * @param requestUserId
+     * @param responseUserId
+     * @return
+     */
+    FriendStatus findFriendStatusByRequestUserIdAndResponseUserId(Long requestUserId, Long responseUserId);
 
-    default FriendStatus findFriendStatusByIdOrElseThrow(Long id) {
-        return findById(id).orElseThrow(() ->
-                new CustomException(ExceptionCode.NOT_FOUND_COMMENT)
-        );
-    }
+    /**
+     * 중복 요청 확인
+     * @param requestUserId
+     * @param responseUserId
+     * @return
+     */
+    @Query("""
+                    SELECT f FROM FriendStatus f
+                    WHERE
+                    (f.requestUser.id = :requestUserId AND f.responseUser.id = :responseUserId)
+                    OR
+                    (f.requestUser.id = :responseUserId AND f.responseUser.id = :requestUserId)
+
+            """)
+    Optional<FriendStatus> findFriendStatusByRequestUserIdAndResponseUserIdOrResponseUserIdAndRequestUserId(@Param("requestUserId") Long requestUserId, @Param("responseUserId") Long responseUserId);
 
     /**
      * 내 친구 목록
@@ -96,4 +109,16 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
                   AND f.status = 1
             """)
     List<Long> findAllByUserIdAndStatusAccepted(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("""
+                DELETE 
+                FROM FriendStatus f
+                WHERE f.requestUser.id = :requestUserId 
+                AND f.responseUser.id = :responseUserId
+            """)
+    void deleteByRequestUserIdAndResponseUserId(@Param("requestUserId") Long requestUserId, @Param("responseUserId") Long responseUserId);
+
+
+
 }
