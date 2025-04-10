@@ -51,7 +51,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
         // 3. 본인 댓글인지 확인
         if (findComment.getUser().getId().equals(loginUserId)) {
-            throw new CustomException(ExceptionCode.LIKE_FAILED);
+            throw new CustomException(ExceptionCode.CANNOT_LIKE_OWN);
         }
 
         // 4. Entity 생성
