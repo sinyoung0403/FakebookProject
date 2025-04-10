@@ -1,9 +1,9 @@
 package com.example.fakebookproject.api.friend.controller;
 
-import com.example.fakebookproject.api.friend.dto.FriendPageResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
+import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.api.friend.service.FriendService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.fakebookproject.common.dto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,75 +17,116 @@ public class FriendController {
 
     private final FriendService friendService;
 
+    /**
+     * 친구 요청
+     * @param requestUserId
+     * @param responseUserId
+     * @return
+     */
     @PostMapping("/requests")
-    public ResponseEntity<FriendResponseDto> requestFriend(
+    public ResponseEntity<FriendStatusResponseDto> requestFriend(
             @SessionAttribute ("loginUser") Long requestUserId,
             @RequestParam Long responseUserId
     ) {
-        FriendResponseDto friendResponseDto = friendService.requestFriend(requestUserId, responseUserId);
+        FriendStatusResponseDto friendResponseDto = friendService.requestFriend(requestUserId, responseUserId);
         return new ResponseEntity<>(friendResponseDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<Page<FriendPageResponseDto>> findMyFriends(
+    /**
+     * 내 친구 목록 조회
+     * @param loginUserId
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity<PageResponse<FriendResponseDto>> findMyFriends(
             @SessionAttribute ("loginUser") Long loginUserId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Page<FriendPageResponseDto> friendResponseDtoList = friendService.findMyFriends(loginUserId, page, size);
+        PageResponse<FriendResponseDto> friendResponseDtoList = friendService.findMyFriends(loginUserId, page, size);
         return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
     }
 
-    @GetMapping("/recommendations/{userId}")
-    public ResponseEntity<Page<FriendPageResponseDto>> recommendFriends(
-            HttpServletRequest request,
+    /**
+     * 추천 친구 목록 조회
+     * @param loginUserId
+     * @param page
+     * @param size
+     * @return
+     */
+    @GetMapping("/recommendations")
+    public ResponseEntity<PageResponse<FriendResponseDto>> recommendFriends(
+            @SessionAttribute ("loginUser") Long loginUserId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        Page<FriendPageResponseDto> friendResponseDtoList = friendService.recommendFriends(userId, page, size);
+        PageResponse<FriendResponseDto> friendResponseDtoList = friendService.recommendFriends(loginUserId, page, size);
         return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
     }
 
+    /**
+     * 나한테 요청 받은 친구 목록
+     * @param loginUserId
+     * @param page
+     * @param size
+     * @return
+     */
     @GetMapping("/received")
-    public ResponseEntity<Page<FriendPageResponseDto>> receivedFriends(
-            HttpServletRequest request,
+    public ResponseEntity<PageResponse<FriendResponseDto>> receivedFriends(
+            @SessionAttribute ("loginUser") Long loginUserId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        Page<FriendPageResponseDto> friendResponseDtoList = friendService.receivedFriends(userId, page, size);
+        PageResponse<FriendResponseDto> friendResponseDtoList = friendService.receivedFriends(loginUserId, page, size);
         return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
     }
 
+    /**
+     * 내가 요청한 친구 목록
+     * @param loginUserId
+     * @param page
+     * @param size
+     * @return
+     */
     @GetMapping("/sent")
-    public ResponseEntity<Page<FriendPageResponseDto>> sentFriends(
-            HttpServletRequest request,
+    public ResponseEntity<PageResponse<FriendResponseDto>> sentFriends(
+            @SessionAttribute ("loginUser") Long loginUserId,
             @RequestParam(required = false, defaultValue = "0", value = "page") int page,
             @RequestParam(required = false, defaultValue = "10", value = "size") int size
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        Page<FriendPageResponseDto> friendResponseDtoList = friendService.sentFriends(userId, page, size);
+        PageResponse<FriendResponseDto> friendResponseDtoList = friendService.sentFriends(loginUserId, page, size);
         return new ResponseEntity<>(friendResponseDtoList, HttpStatus.OK);
     }
 
-    @PatchMapping("/responses/{id}")
+    /**
+     * 친구 요청 수락
+     * @param loginUserId
+     * @param requestUserId
+     * @return
+     */
+    @PatchMapping("/responses/{requestUserId}")
     public ResponseEntity<Void> responseFriend(
-            HttpServletRequest request,
-            @PathVariable Long id,
-            @RequestParam int status) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        friendService.responseFriend(userId, id, status);
+            @SessionAttribute ("loginUser") Long loginUserId,
+            @PathVariable Long requestUserId
+    ) {
+        friendService.responseFriend(loginUserId, requestUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    /**
+     * 친구 요청 거절
+     * @param loginUserId
+     * @param requestUserId
+     * @return
+     */
+    @DeleteMapping("/{requestUserId}")
     public ResponseEntity<Void> deleteFriend(
-            HttpServletRequest request,
-            @PathVariable Long id
+            @SessionAttribute ("loginUser") Long loginUserId,
+            @PathVariable Long requestUserId
     ) {
-        Long userId = (Long) request.getSession().getAttribute("userId");
-        friendService.deleteFriend(userId, id);
+        friendService.deleteFriend(loginUserId, requestUserId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
