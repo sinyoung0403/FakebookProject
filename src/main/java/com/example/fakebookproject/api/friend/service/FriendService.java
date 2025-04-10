@@ -3,8 +3,6 @@ package com.example.fakebookproject.api.friend.service;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.common.dto.PageResponse;
-import org.springframework.data.domain.Page;
-
 
 public interface FriendService {
 
@@ -18,7 +16,7 @@ public interface FriendService {
 
     PageResponse<FriendResponseDto> sentFriends(Long loginUserId, int page, int size);
 
-    void responseFriend(Long loginUserId, Long requestUserId);
+    FriendStatusResponseDto responseFriend(Long loginUserId, Long requestUserId);
 
     void deleteFriend(Long loginUserId, Long requestUserId);
 }

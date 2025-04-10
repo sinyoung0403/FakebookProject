@@ -97,7 +97,7 @@ public class FriendServiceImpl implements FriendService {
         User findUser = userRepository.findById(loginUserId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
 
-        List<Long> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(loginUserId, findUser.getCityName());
+        List<Long> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(loginUserId, findUser.getCityName(), findUser.getHobby());
 
         Page<User> recommendationPage = userRepository.findByIdIn(recommendationList, PageRequest.of(page,size));
 
@@ -113,7 +113,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     /**
-     * 나한테 요청 받은 친구 목록
+     * 내가 요청 받은 친구 목록
      * @param loginUserId
      * @param page
      * @param size
@@ -169,11 +169,15 @@ public class FriendServiceImpl implements FriendService {
      */
     @Override
     @Transactional
-    public void responseFriend(Long loginUserId, Long requestUserId) {
-
-        FriendStatus friendStatus = friendRepository.findFriendStatusByRequestUserIdAndResponseUserId(requestUserId, loginUserId);
-
+    public FriendStatusResponseDto responseFriend(Long loginUserId, Long requestUserId) {
+        FriendStatus friendStatus = friendRepository.findByRequestUserIdAndResponseUserIdOrElseThrow(requestUserId, loginUserId);
         friendStatus.update(1);
+
+        return new FriendStatusResponseDto(
+                friendStatus.getRequestUser().getId(),
+                friendStatus.getResponseUser().getId(),
+                friendStatus.getStatus()
+        );
     }
 
     /**
@@ -184,15 +188,8 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional
     public void deleteFriend(Long loginUserId, Long requestUserId) {
-
-        //FriendStatus friendStatus = friendRepository.findFriendStatusByRequestUserIdAndResponseUserId(requestUserId, loginUserId);
-
+        FriendStatus friendStatus = friendRepository.findByRequestUserIdAndResponseUserIdOrElseThrow(requestUserId, loginUserId);
         friendRepository.deleteByRequestUserIdAndResponseUserId(requestUserId, loginUserId);
-
     }
-
-
-
-
 
 }

@@ -9,9 +9,11 @@ public interface UserService {
 
     UserResponseDto findUserById(Long userId);
 
-    UserResponseDto findUserByLoginUserId(Long loginUserId, PasswordRequestDto dto);
+    UserResponseDto findUserByLoginUserId(Long loginUserId);
 
     UserResponseDto updateUser(Long loginUserId, UserUpdateRequestDto dto);
+
+    void updatePassword(Long loginUserId, UpdatePasswordRequestDto dto);
 
     void deleteUser(Long loginUserId, PasswordRequestDto dto);
 

@@ -1,10 +1,14 @@
 package com.example.fakebookproject.common.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
 
 @RestControllerAdvice
 public class CustomExceptionHandler {
@@ -47,6 +51,12 @@ public class CustomExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ExceptionResponseDto> handleJsonFormatException(HttpMessageNotReadableException e) {
-        return ExceptionResponseDto.dtoResponseEntity(ExceptionCode.INVALID_DATE_FORMAT);
+        String field = ((JsonMappingException) e.getCause()).getPath().get(0).getFieldName();
+
+        if (field.equals("birth")) {
+            return ExceptionResponseDto.dtoResponseEntity(ExceptionCode.INVALID_DATE_FORMAT);
+        }
+
+        return ExceptionResponseDto.dtoResponseEntity(ExceptionCode.VALIDATION_FAILED);
     }
 }

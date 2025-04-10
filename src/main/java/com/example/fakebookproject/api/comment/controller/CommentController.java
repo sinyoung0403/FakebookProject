@@ -12,10 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
-
+@Validated
 @RestController
 @RequestMapping("/api/posts/{postId}/comments")
 @RequiredArgsConstructor
@@ -67,7 +68,7 @@ public class CommentController {
      * @param loginUserId 현재 로그인된 사용자 정보
      * @return 수정된 댓글 정보
      */
-    @PostMapping("/{commentId}")
+    @PatchMapping ("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @NotNull @PathVariable Long postId,
             @NotNull @PathVariable Long commentId,
