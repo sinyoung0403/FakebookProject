@@ -68,22 +68,28 @@ public class CommentServiceImpl implements CommentService {
     /**
      * 댓글 수정
      *
-     * @param userId 현재 로그인된 사용자 식별자
+     * @param loginUserId 현재 로그인된 사용자 식별자
      * @param commentId 수정할 댓글 식별자
      * @param content 수정할 댓글 내용
      * @return 성공 시 수정된 댓글 내용
      *         - 수정할 댓글이 있는 게시글이 존재하지 않을 경우 NOT_FOUND_POST 응답
      *         - 수정할 댓글이 존재하지 않을 경우 NOT_FOUND_COMMENT 응답
-     *         - 댓글 작성자와 현재 로그인된 사용자가 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
+     *         - 댓글 작성자 또는 게시글 작성자가 현재 로그인된 사용자와 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
      *         - 변경할 내용이 없을 경우 NO_CHANGES 응답
      */
     @Override
     @Transactional
-    public CommentResponseDto updateComment(Long userId, Long postId, Long commentId, String content) {
+    public CommentResponseDto updateComment(Long loginUserId, Long postId, Long commentId, String content) {
         postRepository.validateExistenceByPost_Id(postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
+
+        Long postUserId = post.getUser().getId();
+
         Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
-        if (!comment.getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(loginUserId) || !postUserId.equals(loginUserId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
@@ -101,18 +107,24 @@ public class CommentServiceImpl implements CommentService {
      * - 성공 시 204 No Content 응답
      * - 삭제할 댓글이 있는 게시글이 존재하지 않을 경우 NOT_FOUND_POST 응답
      * - 삭제할 댓글이 존재하지 않을 경우 NOT_FOUND_COMMENT 응답
-     * - 댓글 작성자와 현재 로그인된 사용자가 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
+     * - 댓글 작성자 또는 게시글 작성자가 현재 로그인된 사용자와 일치하지 않을 경우 UNAUTHORIZED_ACCESS 응답
      *
-     * @param userId 현재 로그인된 사용자 식별자
+     * @param loginUserId 현재 로그인된 사용자 식별자
      * @param commentId 삭제할 댓글 식별자
      */
     @Override
     @Transactional
-    public void deleteComment(Long userId, Long postId, Long commentId) {
+    public void deleteComment(Long loginUserId, Long postId, Long commentId) {
         postRepository.validateExistenceByPost_Id(postId);
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
+
+        Long postUserId = post.getUser().getId();
+
         Comment comment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
-        if (!comment.getUser().getId().equals(userId)) {
+        if (!comment.getUser().getId().equals(loginUserId) || !postUserId.equals(loginUserId)) {
             throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
         }
 
