@@ -67,7 +67,7 @@ public class CommentController {
      * @param loginUserId 현재 로그인된 사용자 정보
      * @return 수정된 댓글 정보
      */
-    @PostMapping("/{commentId}")
+    @PatchMapping ("/{commentId}")
     public ResponseEntity<CommentResponseDto> updateComment(
             @NotNull @PathVariable Long postId,
             @NotNull @PathVariable Long commentId,
