@@ -169,9 +169,15 @@ public class FriendServiceImpl implements FriendService {
      */
     @Override
     @Transactional
-    public void responseFriend(Long loginUserId, Long requestUserId) {
-        FriendStatus friendStatus = friendRepository.findFriendStatusByRequestUserIdAndResponseUserId(requestUserId, loginUserId);
+    public FriendStatusResponseDto responseFriend(Long loginUserId, Long requestUserId) {
+        FriendStatus friendStatus = friendRepository.findByRequestUserIdAndResponseUserIdOrElseThrow(requestUserId, loginUserId);
         friendStatus.update(1);
+
+        return new FriendStatusResponseDto(
+                friendStatus.getRequestUser().getId(),
+                friendStatus.getResponseUser().getId(),
+                friendStatus.getStatus()
+        );
     }
 
     /**
@@ -182,6 +188,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional
     public void deleteFriend(Long loginUserId, Long requestUserId) {
+        FriendStatus friendStatus = friendRepository.findByRequestUserIdAndResponseUserIdOrElseThrow(requestUserId, loginUserId);
         friendRepository.deleteByRequestUserIdAndResponseUserId(requestUserId, loginUserId);
     }
 
