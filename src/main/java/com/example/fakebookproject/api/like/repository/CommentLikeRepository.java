@@ -12,17 +12,17 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
 
     List<CommentLike> findAllByComment_Id(Long commentId);
 
-    Optional<CommentLike> findByComment_IdAndUser_Id(Long postId, Long userId);
+    Optional<CommentLike> findByComment_IdAndComment_Post_IdAndUser_Id(Long commentId, Long postId, Long userId);
 
     /**
      * 주어진 commentId와 userId에 해당하는 엔티티를 조회하고, 존재하지 않으면 예외를 발생시킵니다.
      *
-     * @param postId
+     * @param commentId
      * @param userId
      * @return commentId와 userId 가 일치하는 CommentLike, 존재하지 않으면 예외
      */
-    default CommentLike findByComment_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
-        return findByComment_IdAndUser_Id(postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
+    default CommentLike findByCommentOrElseThrow(Long commentId, Long postId, Long userId) {
+        return findByComment_IdAndComment_Post_IdAndUser_Id(commentId, postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.LIKE_FAILED));
     }
 
     boolean existsByUser_Id(Long userId);
@@ -35,7 +35,7 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
      */
     default void validateExistenceByUserId(Long userId) {
         if (!existsByUser_Id(userId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
+            throw new CustomException(ExceptionCode.LIKE_USER_NOT_FOUND);
         }
     }
 
@@ -47,7 +47,7 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
      */
     default void validateNotExistenceByUserId(Long userId) {
         if (existsByUser_Id(userId)) {
-            throw new CustomException(ExceptionCode.USER_ALREADY_EXISTS);
+            throw new CustomException(ExceptionCode.ALREADY_LIKE);
         }
     }
 }

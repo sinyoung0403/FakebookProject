@@ -22,7 +22,8 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
      * @return postId와 userId 가 일치하는 PostLike, 존재하지 않으면 예외
      */
     default PostLike findByPost_IdAndUser_IdOrElseThrow(Long postId, Long userId) {
-        return findByPost_IdAndUser_Id(postId, userId).orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_POST));
+        return findByPost_IdAndUser_Id(postId, userId).orElseThrow(
+                () -> new CustomException(ExceptionCode.LIKE_FAILED));
     }
 
     boolean existsByUser_Id(Long userId);
@@ -35,7 +36,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
      */
     default void validateExistenceByUserId(Long userId) {
         if (!existsByUser_Id(userId)) {
-            throw new CustomException(ExceptionCode.NOT_FOUND_USER);
+            throw new CustomException(ExceptionCode.LIKE_USER_NOT_FOUND);
         }
     }
     /**
@@ -46,7 +47,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
      */
     default void validateNotExistenceByUserId(Long userId) {
         if (existsByUser_Id(userId)) {
-            throw new CustomException(ExceptionCode.USER_ALREADY_EXISTS);
+            throw new CustomException(ExceptionCode.ALREADY_LIKE);
         }
     }
 }

@@ -12,10 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
-
+@Validated
 @RestController
 @RequestMapping("/api/posts/{postId}/comments")
 @RequiredArgsConstructor

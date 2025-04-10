@@ -41,8 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 상세페이지
-     * 유저 단건 조회
+     * 상세페이지 - 유저 단건 조회
      *
      * @param userId 조회 대상 사용자 ID
      * @return 조회된 사용자 정보
@@ -61,21 +60,15 @@ public class UserServiceImpl implements UserService {
      * 마이페이지 - 내 정보 조회
      *
      * @param loginUserId loginUser 세션에 저장된 로그인 사용자 ID
-     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
      * @return 로그인한 사용자 정보
      * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      */
     @Override
-    public UserResponseDto findUserByLoginUserId(Long loginUserId, PasswordRequestDto dto) {
+    public UserResponseDto findUserByLoginUserId(Long loginUserId) {
 
         // 유저 검색
         User user = userRepository.findUserByIdOrElseThrow(loginUserId);
-
-        // 비밀번호 검증
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
-        }
 
         return new UserResponseDto(user);
     }
@@ -84,7 +77,7 @@ public class UserServiceImpl implements UserService {
      * 회원 정보 수정
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
-     * @param dto 사용자 수정 요청 데이터 (비밀번호 포함)
+     * @param dto 사용자 수정 요청 데이터 (검증용 비밀번호 포함)
      * @return 수정된 사용자 정보
      * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
@@ -101,13 +94,41 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ExceptionCode.INVALID_PASSWORD);
         }
 
-        // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-
-        user.updateUser(encodedPassword, dto.getUserName(), dto.getBirth(),
-                dto.getPhone(), dto.getImageUrl(), dto.getHobby(), dto.getCityName());
+        user.updateUser(dto.getUserName(), dto.getBirth(), dto.getPhone(),
+                dto.getImageUrl(), dto.getHobby(), dto.getCityName());
 
         return new UserResponseDto(user);
+    }
+
+    /**
+     * 비밀번호 수정
+     *
+     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param dto 비밀번호 수정 요청 데이터
+     * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
+     * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
+     * @throws CustomException 기존 비밀번호로 변경 시 예외 발생 (SAME_AS_OLD_PASSWORD)
+     */
+    @Transactional
+    @Override
+    public void updatePassword(Long loginUserId, UpdatePasswordRequestDto dto) {
+
+        // 유저 검색
+        User user = userRepository.findUserByIdOrElseThrow(loginUserId);
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new CustomException(ExceptionCode.INVALID_PASSWORD);
+        }
+
+        // 기존 비밀번호와 수정 요청 비밀번호가 일치하는 지 확인 후 일치하면 예외 발생
+        if (passwordEncoder.matches(dto.getNewPassword(), user.getPassword())) {
+            throw new CustomException(ExceptionCode.SAME_AS_OLD_PASSWORD);
+        }
+
+        String encodedPassword = passwordEncoder.encode(dto.getNewPassword());
+
+        user.updatePassword(encodedPassword);
     }
 
     /**
