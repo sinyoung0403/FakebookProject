@@ -64,10 +64,10 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
                         OR
                         (f.responseUser.id = :userId AND u.id = f.requestUser.id)
                     )
-                    WHERE f.status = 0 AND u.cityName = :cityName
+                    WHERE f.status = 0 AND (u.cityName = :cityName OR u.hobby = :hobby)
 
             """)
-    List<Long> findRecommendationAllByUserIdOrElseThrow(@Param("userId") Long userId, @Param("cityName") String cityName);
+    List<Long> findRecommendationAllByUserIdOrElseThrow(@Param("userId") Long userId, @Param("cityName") String cityName, @Param("hobby") String hobby);
 
     /**
      * 내가 요청 받은 친구 목록
@@ -118,7 +118,5 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
                 AND f.responseUser.id = :responseUserId
             """)
     void deleteByRequestUserIdAndResponseUserId(@Param("requestUserId") Long requestUserId, @Param("responseUserId") Long responseUserId);
-
-
 
 }
