@@ -48,7 +48,7 @@ public class PostLikeServiceImpl implements PostLikeService {
 
         // 3. 본인 게시물인지 확인
         if (findPost.getUser().getId().equals(loginUserId)) {
-            throw new CustomException(ExceptionCode.LIKE_FAILED);
+            throw new CustomException(ExceptionCode.CANNOT_LIKE_OWN);
         }
 
         // 4. Entity 생성
