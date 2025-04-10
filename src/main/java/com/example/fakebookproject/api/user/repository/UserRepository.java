@@ -21,9 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByIdAndIsDeletedFalse(Long userId);
 
-    Optional<User> findUserById(Long userId);
+    Optional<User> findUserByIdAndIsDeletedFalse(Long userId);
 
-    Optional<User> findUserByEmail(String email);
+    Optional<User> findUserByEmailAndIsDeletedFalse(String email);
 
     default void validateExistenceByUserId(Long userId) {
         if (!existsByIdAndIsDeletedFalse(userId)) {
@@ -38,12 +38,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     }
 
     default User findUserByIdOrElseThrow(Long userId) {
-        return findUserById(userId)
+        return findUserByIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
     }
 
     default User findUserByEmailOrElseThrow(String email) {
-        return findUserByEmail(email)
+        return findUserByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new CustomException(ExceptionCode.LOGIN_FAILED));
     }
 
