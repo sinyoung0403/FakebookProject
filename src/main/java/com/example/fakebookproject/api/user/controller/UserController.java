@@ -46,13 +46,11 @@ public class UserController {
      * 마이페이지 - 내 정보 조회
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
-     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
      * @return 로그인한 사용자 정보
      */
     @PostMapping("/mypage")
-    public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId,
-                                                               @RequestBody @Valid PasswordRequestDto dto) {
-        UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId, dto);
+    public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId) {
+        UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -68,6 +66,20 @@ public class UserController {
                                                       @RequestBody @Valid UserUpdateRequestDto dto) {
         UserResponseDto responseDto = userService.updateUser(loginUserId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    }
+
+    /**
+     * 비밀번호 수정
+     *
+     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param dto 비밀번호 수정 요청 데이터
+     * @return HttpStatus.OK
+     */
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<Void> updatePassword(@SessionAttribute("loginUser") Long loginUserId,
+                                               @RequestBody @Valid UpdatePasswordRequestDto dto) {
+        userService.updatePassword(loginUserId, dto);
+        return ResponseEntity.ok().build();
     }
 
     /**
