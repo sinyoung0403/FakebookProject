@@ -103,7 +103,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         commentLikeRepository.validateExistenceByUserId(loginUserId);
 
         // 3. Entity 생성
-        CommentLike commentLike = commentLikeRepository.findByComment_IdAndUser_IdOrElseThrow(postId, loginUserId);
+        CommentLike commentLike = commentLikeRepository.findByCommentOrElseThrow(commentId, postId, loginUserId);
 
         // 4. commentLikeRepository 삭제
         commentLikeRepository.delete(commentLike);
