@@ -79,6 +79,23 @@ public class PostController {
     }
 
     /**
+     * user_id로 게시물  찾기
+     *
+     * @param id    유저 식별자
+     * @return      해당 식별자로 조회된 게시글
+     */
+    @GetMapping("/user/{id}")
+    public ResponseEntity<PageResponse<PostResponseDto>> findPostByUserId(
+            @PathVariable Long id,
+            @PageableDefault(size = 10, sort = "createdAt", direction = DESC) Pageable pageable
+    ) {
+        PageResponse<PostResponseDto> responseDto = postService.findPostByUserId(id, pageable);
+
+        return ResponseEntity.ok(responseDto);
+    }
+
+
+    /**
      * post_id로 게시물  찾기
      *
      * @param id    게시글 식별자

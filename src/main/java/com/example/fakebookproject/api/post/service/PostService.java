@@ -23,4 +23,6 @@ public interface PostService {
     void updatePost(Long id, Long loginId, PostUpdateDto postUpdateDto);
 
     void deletePost(Long id, Long loginId);
+
+    PageResponse<PostResponseDto> findPostByUserId(Long id, Pageable pageable);
 }

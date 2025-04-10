@@ -122,6 +122,7 @@ public class PostServiceImpl implements PostService{
      * @param loginId           사용자 식별자
      * @param requestDto        수정하려는 게시글 정보
      * @throws CustomException  게시글이 존재하지 않을 경우 예외 발생
+     * @throws CustomException  본인이 쓴 게시글이 아닐 경우 UNAUTHORIZED_ACCESS
      */
     @Transactional
     @Override
@@ -153,6 +154,30 @@ public class PostServiceImpl implements PostService{
         }
 
         postRepository.delete(foundPost);
+    }
+
+    /**
+     * user_id로 게시글 찾기
+     *
+     * @param id                user_id
+     * @param pageable          페이징 정보
+     * @return                  해당 게시글에 대한 정보
+     * @throws CustomException  게시글이 존재하지 않을 경우 예외 발생
+     */
+    @Override
+    public PageResponse<PostResponseDto> findPostByUserId(Long id, Pageable pageable) {
+
+        Page<Post> postPage = postRepository.findPostByUserIdOrElseThrow(id, pageable);
+
+        Page<PostResponseDto> dtoPage = postPage.map(PostResponseDto::new);
+
+        return new PageResponse<>(
+                dtoPage.getContent(),
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages()
+        );
     }
 
 
