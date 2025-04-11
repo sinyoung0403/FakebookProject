@@ -3,6 +3,7 @@ package com.example.fakebookproject.api.user.controller;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.service.UserService;
+import com.example.fakebookproject.common.config.JwtTokenProvider;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +12,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 회원가입
@@ -47,12 +53,14 @@ public class UserController {
     /**
      * 마이페이지 - 내 정보 조회
      *
-     * @param loginUserId 세션에 저장된 로그인 사용자 ID
      * @return 로그인한 사용자 정보
      */
     @GetMapping("/mypage")
-    public ResponseEntity<UserResponseDto> findUserByLoginUser(@SessionAttribute("loginUser") Long loginUserId) {
-        UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId);
+    public ResponseEntity<UserResponseDto> findUserByLoginUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = Long.valueOf(authentication.getName());
+
+        UserResponseDto responseDto = userService.findUserById(userId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -103,21 +111,16 @@ public class UserController {
      * 로그인
      *
      * @param dto 로그인 요청 정보 (아이디, 비밀번호)
-     * @param httpRequest 세션 생성에 사용
      * @return 로그인 성공 메시지
      */
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody @Valid LoginRequestDto dto, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequestDto dto) {
 
         User user = userService.loginUser(dto);
 
-        // 세션이 없으면 새로 생성하고, 있으면 기존 세션을 사용
-        HttpSession session = httpRequest.getSession();
+        String token = jwtTokenProvider.generateToken(user.getUserName(), user.getId());
 
-        // 세션에 사용자 ID 저장
-        session.setAttribute("loginUser", user.getId());
-
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
+        return ResponseEntity.ok(Map.of("token",token));
     }
 
     /**
