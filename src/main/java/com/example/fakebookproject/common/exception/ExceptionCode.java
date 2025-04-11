@@ -17,6 +17,7 @@ public enum ExceptionCode {
     NOT_LOGGEDIN(HttpStatus.UNAUTHORIZED, "NOT_LOGGEDIN", "로그인되지 않은 사용자입니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "LOGIN_FAILED", "이메일 또는 비밀번호가 일치하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다."),
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "유효하지 않은 리프레시 토큰입니다."),
 
     /**
      * User

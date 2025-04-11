@@ -1,5 +1,11 @@
-#로컬 전용 설정 파일 무시
+# 로컬 전용 설정 파일 무시
 src/main/resources/application-local.properties
+
+# jwt
+src/main/resources/application-jwt.properties
+
+# 인코딩 유틸 클래스 제외
+src/main/java/com/example/fakebookproject/common/auth/Base64Encoder.java
 
 HELP.md
 .gradle
