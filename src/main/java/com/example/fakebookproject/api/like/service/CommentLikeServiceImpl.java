@@ -76,7 +76,8 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     public List<FindAllCommentLikeResponseDto> findAllCommentLike(Long postId, Long commentId, Long loginUserId) {
         return commentLikeRepository.findAllByComment_Id(commentId)
                 .stream()
-                .map(FindAllCommentLikeResponseDto::new).toList();
+                .map(FindAllCommentLikeResponseDto::new)
+                .toList();
     }
 
     /**
