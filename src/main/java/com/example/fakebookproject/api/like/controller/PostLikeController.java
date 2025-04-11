@@ -2,6 +2,7 @@ package com.example.fakebookproject.api.like.controller;
 
 import com.example.fakebookproject.api.like.dto.FindAllPostLikeResponseDto;
 import com.example.fakebookproject.api.like.service.PostLikeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +26,9 @@ public class PostLikeController {
     @PostMapping
     public ResponseEntity<String> createPostLike(
             @PathVariable Long postId,
-            @SessionAttribute("loginUser") Long loginUserId
+            HttpServletRequest request
     ) {
+        Long loginUserId = (Long) request.getAttribute("userId");
         postLikeService.createPostLike(postId, loginUserId);
         return ResponseEntity.status(HttpStatus.CREATED).body("좋아요를 추가했습니다.");
     }
@@ -54,8 +56,9 @@ public class PostLikeController {
     @DeleteMapping
     public ResponseEntity<String> deleteLike(
             @PathVariable Long postId,
-            @SessionAttribute("loginUser") Long loginUserId
+            HttpServletRequest request
     ) {
+        Long loginUserId = (Long) request.getAttribute("userId");
         postLikeService.deletePostLike(postId, loginUserId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("좋아요가 취소되었습니다.");
     }

@@ -29,13 +29,13 @@ public class FriendStatus {
 
     public FriendStatus() {}
 
-    public FriendStatus(int status, User requestUser, User responseUser){
-        this.status = status;
+    public FriendStatus(User requestUser, User responseUser){
         this.requestUser = requestUser;
         this.responseUser = responseUser;
     }
 
-    public void setUser(User requestUser, User responseUser) {
+    public FriendStatus(int status, User requestUser, User responseUser){
+        this.status = status;
         this.requestUser = requestUser;
         this.responseUser = responseUser;
     }

@@ -3,15 +3,12 @@ package com.example.fakebookproject.api.user.controller;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Enumeration;
 
 @Slf4j
 @RestController
@@ -48,27 +45,28 @@ public class UserController {
     /**
      * 마이페이지 - 내 정보 조회
      *
-     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param request 토큰이 저장된 HttpRequest 객체
      * @return 로그인한 사용자 정보
      */
     @GetMapping("/mypage")
     public ResponseEntity<UserResponseDto> findUserByLoginUser(HttpServletRequest request) {
-        Long userId = (Long) request.getAttribute("userId");
-        log.info("컨트롤러에서 받은 userId: {}", userId);
-        UserResponseDto responseDto = userService.findUserByLoginUserId(userId);
+        Long loginUserId = (Long) request.getAttribute("userId");
+        log.info("컨트롤러에서 받은 userId: {}", loginUserId);
+        UserResponseDto responseDto = userService.findUserByLoginUserId(loginUserId);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
     /**
      * 회원 정보 수정
      *
-     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param request 토큰이 저장된 HttpRequest 객체
      * @param dto 사용자 수정 요청 데이터 (비밀번호 포함)
      * @return 수정된 사용자 정보
      */
     @PatchMapping
-    public ResponseEntity<UserResponseDto> updateUser(@SessionAttribute("loginUser") Long loginUserId,
+    public ResponseEntity<UserResponseDto> updateUser(HttpServletRequest request,
                                                       @RequestBody @Valid UserUpdateRequestDto dto) {
+        Long loginUserId = (Long) request.getAttribute("userId");
         UserResponseDto responseDto = userService.updateUser(loginUserId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
@@ -76,13 +74,14 @@ public class UserController {
     /**
      * 비밀번호 수정
      *
-     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param request 토큰이 저장된 HttpRequest 객체
      * @param dto 비밀번호 수정 요청 데이터
      * @return HttpStatus.OK
      */
     @PatchMapping("/updatePassword")
-    public ResponseEntity<Void> updatePassword(@SessionAttribute("loginUser") Long loginUserId,
+    public ResponseEntity<Void> updatePassword(HttpServletRequest request,
                                                @RequestBody @Valid UpdatePasswordRequestDto dto) {
+        Long loginUserId = (Long) request.getAttribute("userId");
         userService.updatePassword(loginUserId, dto);
         return ResponseEntity.ok().build();
     }
@@ -91,16 +90,15 @@ public class UserController {
      * 회원 탈퇴 (소프트 딜리트 방식)
      * 사용자의 비밀번호를 검증한 후, 실제 삭제 대신 is_deleted를 true로 변경
      *
-     * @param loginUserId 세션에 저장된 로그인 사용자 ID
+     * @param request 토큰이 저장된 HttpRequest 객체
      * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
      * @return HttpStatus.NO_CONTENT
      */
     @DeleteMapping
-    public ResponseEntity<Void> deleteUser(@SessionAttribute ("loginUser") Long loginUserId,
-                                           @RequestBody @Valid PasswordRequestDto dto,
-                                           HttpSession session) {
+    public ResponseEntity<Void> deleteUser(HttpServletRequest request,
+                                           @RequestBody @Valid PasswordRequestDto dto) {
+        Long loginUserId = (Long) request.getAttribute("userId");
         userService.deleteUser(loginUserId, dto);
-        session.invalidate();
         return ResponseEntity.noContent().build();
     }
 
