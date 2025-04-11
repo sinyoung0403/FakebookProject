@@ -110,18 +110,18 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN);
         }
 
-        // 2. 토큰에서 사용자 ID 추출
+        // 3. 토큰에서 사용자 ID 추출
         Long userId = jwtProvider.getUserId(refreshToken);
 
-        // 3. 사용자 조회
+        // 4. 사용자 조회
         User user = userRepository.findUserByIdOrElseThrow(userId);
 
-        // 4. DB에 저장된 리프레시 토큰과 일치 여부 확인
+        // 5. DB에 저장된 리프레시 토큰과 일치 여부 확인
         if (!refreshToken.equals(user.getRefreshToken())) {
             throw new CustomException(ExceptionCode.INVALID_REFRESH_TOKEN);
         }
 
-        // 5. 새 Access Token 발급
+        // 6. 새 Access Token 발급
         return jwtProvider.createAccessToken(userId);
     }
 

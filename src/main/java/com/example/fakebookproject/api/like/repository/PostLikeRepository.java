@@ -26,7 +26,7 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
                 () -> new CustomException(ExceptionCode.LIKE_FAILED));
     }
 
-    boolean existsByUser_Id(Long userId);
+    boolean existsByUserIdAndPostId(Long userId, Long postId);
 
     /**
      * userId 가 존재하는지 확인하기 위한 메서드
@@ -34,8 +34,8 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
      *
      * @param userId
      */
-    default void validateExistenceByUserId(Long userId) {
-        if (!existsByUser_Id(userId)) {
+    default void validateExistenceByUserIdAndPostId(Long userId, Long postId) {
+        if (!existsByUserIdAndPostId(userId, postId)) {
             throw new CustomException(ExceptionCode.LIKE_USER_NOT_FOUND);
         }
     }
@@ -45,8 +45,8 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
      *
      * @param userId
      */
-    default void validateNotExistenceByUserId(Long userId) {
-        if (existsByUser_Id(userId)) {
+    default void validateNotExistenceByUserIdAndPostId(Long userId, Long postId) {
+        if (existsByUserIdAndPostId(userId, postId)) {
             throw new CustomException(ExceptionCode.ALREADY_LIKE);
         }
     }

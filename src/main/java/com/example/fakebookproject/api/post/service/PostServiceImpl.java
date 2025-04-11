@@ -133,11 +133,7 @@ public class PostServiceImpl implements PostService{
         Post foundPost = postRepository.findPostByIdOrElseThrow(id);
 
         if(!foundPost.getUser().getId().equals(loginId)) {
-            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
-        }
-
-        if(requestDto.getContents() == null && requestDto.getImageUrl() == null){
-            throw new CustomException(ExceptionCode.NO_CHANGES);
+            throw new CustomException(ExceptionCode.FORBIDDEN_ACCESS);
         }
 
         foundPost.updatePost(requestDto.getContents(), requestDto.getImageUrl());
@@ -158,7 +154,7 @@ public class PostServiceImpl implements PostService{
         Post foundPost = postRepository.findPostByIdOrElseThrow(id);
 
         if(!foundPost.getUser().getId().equals(loginId)) {
-            throw new CustomException(ExceptionCode.UNAUTHORIZED_ACCESS);
+            throw new CustomException(ExceptionCode.FORBIDDEN_ACCESS);
         }
 
         postRepository.delete(foundPost);

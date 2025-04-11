@@ -36,6 +36,7 @@ public enum ExceptionCode {
      * Post
      */
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "NOT_FOUND_POST", "게시글이 존재하지 않습니다."),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "FORBIDDEN_ACCESS","접근 권한이 없습니다."),
 
     /**
      * Comment
@@ -53,7 +54,7 @@ public enum ExceptionCode {
     /**
      * Global
      */
-    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_ACCESS","잘못된 접근입니다."),
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED_ACCESS","접근할 수 없는 사용자입니다."),
 
     VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED","입력 값이 유효하지 않습니다."),
 
