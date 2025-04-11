@@ -1,5 +1,6 @@
 package com.example.fakebookproject.api.user.service;
 
+import com.example.fakebookproject.api.auth.TokenResponseDto;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 
@@ -17,6 +18,6 @@ public interface UserService {
 
     void deleteUser(Long loginUserId, PasswordRequestDto dto);
 
-    User loginUser(LoginRequestDto dto);
+    TokenResponseDto loginUser(LoginRequestDto dto);
 
 }

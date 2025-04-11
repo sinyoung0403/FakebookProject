@@ -5,10 +5,12 @@ import com.example.fakebookproject.api.post.dto.PostResponseDto;
 import com.example.fakebookproject.api.post.dto.PostUpdateDto;
 import com.example.fakebookproject.api.post.service.PostService;
 import com.example.fakebookproject.common.dto.PageResponse;
+import com.example.fakebookproject.common.util.TokenUtils;
 import jakarta.persistence.PostUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,26 +22,29 @@ import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final TokenUtils tokenUtils;
 
     /**
      * 게시글을 생성
      *
-     * @param loginId       현재 로그인 된 사용자 정보
      * @param requestDto    등록할 게시글 정보
      * @return              성공 시 CREATED
      */
     @PostMapping
     public ResponseEntity<PostResponseDto> createPost(
-            @SessionAttribute("loginUser") Long loginId,
+            HttpServletRequest request,
             @RequestBody @Valid PostCreateRequestDto requestDto
     ) {
-        PostResponseDto responseDto = postService.createPost(requestDto, loginId);
+        String token = request.getHeader("ACCESS_TOKEN");
+        Long userId = tokenUtils.getUserIdFromAccessToken(token);
 
+        PostResponseDto responseDto = postService.createPost(requestDto, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 

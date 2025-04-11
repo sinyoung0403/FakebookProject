@@ -1,11 +1,15 @@
 package com.example.fakebookproject.api.user.service;
 
+import com.example.fakebookproject.api.auth.Auth;
+import com.example.fakebookproject.api.auth.AuthRepository;
+import com.example.fakebookproject.api.auth.TokenResponseDto;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
 import com.example.fakebookproject.common.config.PasswordEncoder;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
+import com.example.fakebookproject.common.util.TokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenUtils tokenUtils;
+    private final AuthRepository authRepository;
 
     /**
      * 회원가입
@@ -35,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         // User 엔티티 생성 및 저장
         User user = new User(dto.getEmail(), encodedPassword, dto.getUserName(),
-                    dto.getBirth(), dto.getGender(), dto.getPhone());
+                dto.getBirth(), dto.getGender(), dto.getPhone());
 
         return new UserResponseDto(userRepository.save(user));
     }
@@ -77,7 +83,7 @@ public class UserServiceImpl implements UserService {
      * 회원 정보 수정
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
-     * @param dto 사용자 수정 요청 데이터 (검증용 비밀번호 포함)
+     * @param dto         사용자 수정 요청 데이터 (검증용 비밀번호 포함)
      * @return 수정된 사용자 정보
      * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
@@ -104,7 +110,7 @@ public class UserServiceImpl implements UserService {
      * 비밀번호 수정
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
-     * @param dto 비밀번호 수정 요청 데이터
+     * @param dto         비밀번호 수정 요청 데이터
      * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      * @throws CustomException 기존 비밀번호로 변경 시 예외 발생 (SAME_AS_OLD_PASSWORD)
@@ -136,7 +142,7 @@ public class UserServiceImpl implements UserService {
      * 사용자의 비밀번호를 검증한 후, 실제 삭제 대신 is_deleted를 true로 변경
      *
      * @param loginUserId 세션에 저장된 로그인 사용자 ID
-     * @param dto 비밀번호 요청 데이터 (사용자 본인 확인용)
+     * @param dto         비밀번호 요청 데이터 (사용자 본인 확인용)
      * @throws CustomException 사용자 정보가 존재하지 않을 경우 예외 발생 (NOT_FOUND_USER)
      * @throws CustomException 비밀번호 불일치 시 예외 발생 (INVALID_PASSWORD)
      */
@@ -162,18 +168,34 @@ public class UserServiceImpl implements UserService {
      * @throws CustomException 이메일 미존재 또는 비밀번호 불일치 시 예외 발생 (LOGIN_FAILED)
      */
     @Override
-    public User loginUser(LoginRequestDto dto) {
+    public TokenResponseDto loginUser(LoginRequestDto dto) {
 
         // 이메일로 사용자 조회
         User user = userRepository.findUserByEmailOrElseThrow(dto.getEmail());
 
         // 비밀번호가 일치하지 않으면 예외 발생
-        if  (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new CustomException(ExceptionCode.LOGIN_FAILED);
         }
 
-        // 인증 성공 시 사용자 반환
-        return user;
+        // Access Token 생성
+        String accessToken = tokenUtils.createJwtToken(user);
+        // User 의 refresh Token 존재 여부 확인
+        Auth auth = authRepository.findByUserIdOrNull(user.getId());
+
+        // Refresh 가 Null => 최초 로그인
+        String refreshToken = tokenUtils.saveRefreshToken(user);
+        if (auth == null) {
+            authRepository.save(Auth.builder()
+                    .user(user)
+                    .refreshToken(refreshToken)
+                    .build());
+        } else {
+            auth.refreshUpdate(refreshToken);
+        }
+
+        // accessToken + refreshToken 리턴
+        return TokenResponseDto.builder().ACCESS_TOKEN(accessToken).REFRESH_TOKEN(refreshToken).build();
     }
 
 }

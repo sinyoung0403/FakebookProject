@@ -1,5 +1,6 @@
 package com.example.fakebookproject.api.user.controller;
 
+import com.example.fakebookproject.api.auth.TokenResponseDto;
 import com.example.fakebookproject.api.user.dto.*;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.service.UserService;
@@ -109,17 +110,11 @@ public class UserController {
      * @return 로그인 성공 메시지
      */
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody @Valid LoginRequestDto dto, HttpServletRequest httpRequest) {
+    public ResponseEntity<TokenResponseDto> loginUser(@RequestBody @Valid LoginRequestDto dto, HttpServletRequest httpRequest) {
 
-        User user = userService.loginUser(dto);
+        TokenResponseDto tokenResponseDto = userService.loginUser(dto);
 
-        // 세션이 없으면 새로 생성하고, 있으면 기존 세션을 사용
-        HttpSession session = httpRequest.getSession();
-
-        // 세션에 사용자 ID 저장
-        session.setAttribute("loginUser", user.getId());
-
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
+        return ResponseEntity.status(HttpStatus.OK).body(tokenResponseDto);
     }
 
     /**
