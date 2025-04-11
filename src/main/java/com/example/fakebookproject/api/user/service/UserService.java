@@ -17,6 +17,4 @@ public interface UserService {
 
     void deleteUser(Long loginUserId, PasswordRequestDto dto);
 
-    User loginUser(LoginRequestDto dto);
-
 }
