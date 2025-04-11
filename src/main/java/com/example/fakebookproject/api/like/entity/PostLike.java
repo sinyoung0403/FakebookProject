@@ -32,14 +32,5 @@ public class PostLike {
         this.user = user;
         this.post = post;
     }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
 }
 
