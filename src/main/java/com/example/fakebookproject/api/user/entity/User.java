@@ -72,11 +72,6 @@ public class User extends BaseTimeEntity {
 
     public User() {}
 
-    // Junit 테스트용
-    public User(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
     public User(String email, String password, String userName, LocalDate birth, String gender, String phone) {
         this.email = email;
         this.password = password;
@@ -103,6 +98,10 @@ public class User extends BaseTimeEntity {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 
 }

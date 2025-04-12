@@ -14,9 +14,11 @@ public enum ExceptionCode {
     /**
      * Login
      */
-    NOT_LOGGEDIN(HttpStatus.UNAUTHORIZED, "NOT_LOGGEDIN", "로그인되지 않은 사용자입니다."),
+    NOT_LOGGED_IN(HttpStatus.UNAUTHORIZED, "NOT_LOGGED_IN", "로그인되지 않은 사용자입니다."),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "LOGIN_FAILED", "이메일 또는 비밀번호가 일치하지 않습니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD", "비밀번호가 일치하지 않습니다."),
+    INVALID_AUTH_HEADER(HttpStatus.BAD_REQUEST, "INVALID_AUTH_HEADER", "유효하지 않은 헤더 형식입니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "INVALID_ACCESS_TOKEN", "유효하지 않은 액세스 토큰입니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "유효하지 않은 리프레시 토큰입니다."),
 
     /**
