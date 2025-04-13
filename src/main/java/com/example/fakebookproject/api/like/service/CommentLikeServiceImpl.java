@@ -43,11 +43,11 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
         // 1. Like 추가 전 유효성 검사:
         User findUser = userRepository.findUserByIdOrElseThrow(loginUserId);
-        postRepository.findPostByIdOrElseThrow(postId);
+        postRepository.validateExistenceByPost_Id(postId);
         Comment findComment = commentRepository.findCommentByIdOrElseThrow(commentId);
 
         // 2. commentLikeRepository User 존재 여부 유효성 검사
-        commentLikeRepository.validateNotExistenceByUserId(loginUserId);
+        commentLikeRepository.validateNotExistenceByUserIdAndCommentId(loginUserId, commentId);
 
         // 3. 본인 댓글인지 확인
         if (findComment.getUser().getId().equals(loginUserId)) {
@@ -100,7 +100,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         commentRepository.validateExistenceByCommentId(commentId);
 
         // 2. commentLikeRepository User 존재 여부 유효성 검사
-        commentLikeRepository.validateExistenceByUserId(loginUserId);
+        commentLikeRepository.validateExistenceByUserIdAndCommentId(loginUserId, commentId);
 
         // 3. Entity 생성
         CommentLike commentLike = commentLikeRepository.findByCommentOrElseThrow(commentId, postId, loginUserId);

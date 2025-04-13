@@ -154,26 +154,4 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    /**
-     * 로그인 요청 정보를 기반으로 사용자 인증 수행
-     *
-     * @param dto 로그인 요청 정보 (이메일, 비밀번호)
-     * @return 인증된 사용자 객체
-     * @throws CustomException 이메일 미존재 또는 비밀번호 불일치 시 예외 발생 (LOGIN_FAILED)
-     */
-    @Override
-    public User loginUser(LoginRequestDto dto) {
-
-        // 이메일로 사용자 조회
-        User user = userRepository.findUserByEmailOrElseThrow(dto.getEmail());
-
-        // 비밀번호가 일치하지 않으면 예외 발생
-        if  (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new CustomException(ExceptionCode.LOGIN_FAILED);
-        }
-
-        // 인증 성공 시 사용자 반환
-        return user;
-    }
-
 }

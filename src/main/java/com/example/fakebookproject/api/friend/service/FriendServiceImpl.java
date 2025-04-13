@@ -3,19 +3,24 @@ package com.example.fakebookproject.api.friend.service;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.api.friend.entity.FriendStatus;
+import com.example.fakebookproject.api.friend.queue.FriendRequestConsumer;
 import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.config.RabbitConfig;
 import com.example.fakebookproject.common.dto.PageResponse;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.Modifying;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,20 +40,16 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public FriendStatusResponseDto requestFriend(Long requestUserId, Long responseUserId) {
 
-        User requestUser = userRepository.findById(requestUserId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
-
-        User responseUser = userRepository.findById(responseUserId)
-                .orElseThrow(() -> new CustomException(ExceptionCode.NOT_FOUND_USER));
+        User requestUser = userRepository.findUserByIdOrElseThrow(requestUserId);
+        User responseUser = userRepository.findUserByIdOrElseThrow(responseUserId);
 
         //같은 친구에게 다시 한 번 친구 요청 할 경우, "이미 친구 신청한 회원입니다." 에러
-        Optional<FriendStatus> isExist = friendRepository.findFriendStatusByRequestUserIdAndResponseUserIdOrResponseUserIdAndRequestUserId(requestUser.getId(), responseUser.getId());
-        if(isExist.isPresent()) {
+        boolean isExist = friendRepository.existsFriendStatusBetweenUsers(requestUser.getId(), responseUser.getId());
+        if(isExist) {
             throw new CustomException(ExceptionCode.ALREADY_REQUESTED);
         }
 
-        FriendStatus friendStatus =new FriendStatus();
-        friendStatus.setUser(requestUser, responseUser);
+        FriendStatus friendStatus =new FriendStatus(requestUser, responseUser);
 
         friendRepository.save(friendStatus);
 
@@ -72,7 +73,6 @@ public class FriendServiceImpl implements FriendService {
         List<Long> friendIds = friendRepository.findAllByUserIdAndStatusAcceptedOrElseThrow(loginUserId);
 
         Page<User> friendPage = userRepository.findByIdIn(friendIds, PageRequest.of(page,size));
-
         Page<FriendResponseDto> friendResponseDtoPage = friendPage.map(friend -> new FriendResponseDto(friend.getId(), friend.getUserName(), friend.getImageUrl()));
 
         return new PageResponse<>(
@@ -100,7 +100,6 @@ public class FriendServiceImpl implements FriendService {
         List<Long> recommendationList = friendRepository.findRecommendationAllByUserIdOrElseThrow(findUser.getId(), findUser.getCityName(), findUser.getHobby());
 
         Page<User> recommendationPage = userRepository.findByIdIn(recommendationList, PageRequest.of(page,size));
-
         Page<FriendResponseDto> friendResponseDtoPage = recommendationPage.map(friend -> new FriendResponseDto(friend.getId(), friend.getUserName(), friend.getImageUrl()));
 
         return new PageResponse<>(
@@ -125,7 +124,6 @@ public class FriendServiceImpl implements FriendService {
         List<Long> receivedList = friendRepository.findReceivedAllByUserIdOrElseThrow(loginUserId);
 
         Page<User> receivedPage = userRepository.findByIdIn(receivedList, PageRequest.of(page,size));
-
         Page<FriendResponseDto> friendResponseDtoPage = receivedPage.map(friend -> new FriendResponseDto(friend.getId(), friend.getUserName(), friend.getImageUrl()));
 
         return new PageResponse<>(
@@ -150,7 +148,6 @@ public class FriendServiceImpl implements FriendService {
         List<Long> sentList = friendRepository.findSentAllByUserIdOrElseThrow(loginUserId);
 
         Page<User> sentPage = userRepository.findByIdIn(sentList, PageRequest.of(page,size));
-
         Page<FriendResponseDto> friendResponseDtoPage = sentPage.map(friend -> new FriendResponseDto(friend.getId(), friend.getUserName(), friend.getImageUrl()));
 
         return new PageResponse<>(

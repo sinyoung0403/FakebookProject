@@ -67,9 +67,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    public User() {
-        this.isDeleted = false;
-    }
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
+    public User() {}
 
     public User(String email, String password, String userName, LocalDate birth, String gender, String phone) {
         this.email = email;
@@ -93,6 +94,14 @@ public class User extends BaseTimeEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshToken() {
+        this.refreshToken = null;
     }
 
 }

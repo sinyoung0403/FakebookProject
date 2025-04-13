@@ -41,14 +41,15 @@ public interface FriendRepository extends JpaRepository<FriendStatus, Long> {
      * @return
      */
     @Query("""
-                    SELECT f FROM FriendStatus f
+                    SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END 
+                    FROM FriendStatus f
                     WHERE
                     (f.requestUser.id = :requestUserId AND f.responseUser.id = :responseUserId)
                     OR
                     (f.requestUser.id = :responseUserId AND f.responseUser.id = :requestUserId)
 
             """)
-    Optional<FriendStatus> findFriendStatusByRequestUserIdAndResponseUserIdOrResponseUserIdAndRequestUserId(@Param("requestUserId") Long requestUserId, @Param("responseUserId") Long responseUserId);
+    boolean existsFriendStatusBetweenUsers(@Param("requestUserId") Long requestUserId, @Param("responseUserId") Long responseUserId);
 
     /**
      * 내 친구 목록
