@@ -13,12 +13,12 @@
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=flat&logo=postman&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)
 
---- 
+<br>
 
 ## ERD 다이어그램
 ![ERD](erd_diagram.png)
 
----
+<br>
 
 ## 패키지 구조
 ```
@@ -65,7 +65,8 @@ com.example.fakebookproject
 │   ├── 📁 exception  
 │   └── 📁 filter
 ```
----
+
+<br>
 
 ## 팀원별 주요 담당 기능
 - **박신영 (팀장)**
@@ -84,7 +85,7 @@ com.example.fakebookproject
   - **댓글 기능**: 댓글 등록, 수정, 삭제, 페이징 기반 조회
   - **예외 처리 구현**: 전역 예외 처리 및 커스텀 예외 대응
 
----
+<br>
 
 ## 기능 명세서
 
@@ -158,8 +159,6 @@ com.example.fakebookproject
 - 리프레시 토큰을 이용해 만료 시간이 지난 액세스 토큰을 재발급한다.
 
 <br>
-<hr>
-<br>
 
 ### 2. 친구 기능
 
@@ -215,6 +214,7 @@ com.example.fakebookproject
 - 로그인한 사용자와 친구가 아닌 친구 목록을 불러온다.
 - 로그인한 사용자와 지역 혹은 취미가 같은 친구 목록을 불러온다.
 
+<br>
 
 ### 3. 게시글 기능
 
@@ -262,6 +262,7 @@ com.example.fakebookproject
 - **입력값:**
   - `postId`: 삭제할 게시글 식별자
 
+<br>
 
 ### 4. 댓글 기능
 
@@ -296,6 +297,7 @@ com.example.fakebookproject
   - `postId`: 삭제할 댓글이 등록된 게시글 식별자
   - `commentId`: 삭제할 댓글의 식별자
 
+<br>
 
 ### 5. 게시글 좋아요
 
@@ -324,6 +326,7 @@ com.example.fakebookproject
   - `postId`: 게시글 ID
   - `loginUserId`: 현재 로그인한 사용자 ID
 
+<br>
 
 ### 6. 댓글 좋아요
 
@@ -355,11 +358,11 @@ com.example.fakebookproject
   - `commentId`: 댓글 ID (Long)
   - `loginUserId`: 로그인된 사용자 ID (Long)
 
----
+<br>
 
 ## ▶&nbsp;&nbsp;[API 명세서](https://documenter.getpostman.com/view/43154257/2sB2cXA2WL)
 
----
+<br>
 
 ## 예외 처리
 
@@ -393,7 +396,7 @@ com.example.fakebookproject
 |            | `NO_CHANGES`                | `204 NO_CONTENT`     | 변경된 내용이 없습니다. |
 |            | `RELOAD_FAILED`             | `500 INTERNAL_SERVER_ERROR` | 데이터를 불러오는 데 실패했습니다. |
 
----
+<br>
 
 ## Contributors 
 
