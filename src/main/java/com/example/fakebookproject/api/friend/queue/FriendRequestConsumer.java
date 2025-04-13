@@ -26,7 +26,7 @@ public class FriendRequestConsumer {
 
 
         } catch (Exception e){
-            System.out.println("메세지: " + e.getMessage());
+            System.out.println("에러 메세지: " + e.getMessage());
         }
 
     }
