@@ -2,14 +2,21 @@ package com.example.fakebookproject.api.friend.controller;
 
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
+import com.example.fakebookproject.api.friend.queue.FriendRequestConsumer;
+import com.example.fakebookproject.api.friend.service.FriendRequestService;
 import com.example.fakebookproject.api.friend.service.FriendService;
+import com.example.fakebookproject.common.config.RabbitConfig;
 import com.example.fakebookproject.common.dto.PageResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friends")
@@ -17,6 +24,18 @@ import org.springframework.web.bind.annotation.*;
 public class FriendController {
 
     private final FriendService friendService;
+    private final FriendRequestService friendRequestService;
+    private final FriendRequestConsumer friendRequestConsumer;
+    private final RabbitTemplate rabbitTemplate;
+
+//    @GetMapping("/friend-request")
+//    public String sendFriendRequest(
+//            @RequestParam Long requestUserId,
+//            @RequestParam Long responseUserId
+//    ) {
+//        friendService.sendToQueue(requestUserId, responseUserId);
+//        return "친구 요청 전송 완료!";
+//    }
 
     /**
      * 친구 요청
@@ -25,13 +44,14 @@ public class FriendController {
      * @return
      */
     @PostMapping("/requests")
-    public ResponseEntity<FriendStatusResponseDto> requestFriend(
+    public ResponseEntity<String> requestFriend(
             HttpServletRequest request,
             @RequestParam Long responseUserId
     ) {
         Long requestUserId = (Long) request.getAttribute("userId");
-        FriendStatusResponseDto friendResponseDto = friendService.requestFriend(requestUserId, responseUserId);
-        return new ResponseEntity<>(friendResponseDto, HttpStatus.OK);
+        //FriendStatusResponseDto friendResponseDto = friendService.requestFriend(requestUserId, responseUserId);
+        friendRequestService.sendToQueue(requestUserId, responseUserId);
+        return new ResponseEntity<>("Success Queue", HttpStatus.OK);
     }
 
     /**

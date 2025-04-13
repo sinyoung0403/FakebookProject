@@ -3,19 +3,24 @@ package com.example.fakebookproject.api.friend.service;
 import com.example.fakebookproject.api.friend.dto.FriendResponseDto;
 import com.example.fakebookproject.api.friend.dto.FriendStatusResponseDto;
 import com.example.fakebookproject.api.friend.entity.FriendStatus;
+import com.example.fakebookproject.api.friend.queue.FriendRequestConsumer;
 import com.example.fakebookproject.api.friend.repository.FriendRepository;
 import com.example.fakebookproject.api.user.entity.User;
 import com.example.fakebookproject.api.user.repository.UserRepository;
+import com.example.fakebookproject.common.config.RabbitConfig;
 import com.example.fakebookproject.common.dto.PageResponse;
 import com.example.fakebookproject.common.exception.CustomException;
 import com.example.fakebookproject.common.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.repository.Modifying;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
